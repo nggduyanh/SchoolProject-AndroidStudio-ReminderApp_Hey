@@ -1,14 +1,168 @@
 package com.example.hey;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import Adapters.GroupAdapter;
+import Adapters.ListReminderAdapter;
+import Fragments.AddFragment;
+import ItemDecoration.MarginGroupItem;
+import Models.Group;
+import Models.ListReminder;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView groupReminder;
+
+    private GroupAdapter adapterGroup;
+
+    private RecyclerView listReminder;
+
+    private ImageButton deleteEditTextText;
+
+    private EditText editTextMain;
+
+    private FragmentContainerView fragmentContainerView;
+
+    private ConstraintLayout layout ;
+    private Guideline g;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initMainActivityComponents();
+
+        setMainLayoutPadding();
+
     }
+
+    private void setMainLayoutPadding()
+    {
+        layout = findViewById(R.id.main_layout);
+        g = findViewById(R.id.guideLine_main);
+        layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int[] p = new int[2];
+                int[] p2 = new int[2];
+                g.getLocationInWindow(p);
+                getSupportFragmentManager().findFragmentById(R.id.fragment_container_main).getView().getLocationOnScreen(p2);
+
+                Log.d("phananh2","Location: "  + p[0] + " " + p[1]);
+                int resultPadding = p[1] / 90 * 10;
+                layout.setPadding(0,0,0,resultPadding);
+                Log.d("phananh","Location: " + p2[0] + " " + p2[1]);
+            }
+        });
+    }
+    private void initMainActivityComponents() {
+        initGroupReminderComponents();
+        initListReminderComponents();
+        initSearchComponents();
+        initFragment();
+    }
+
+    private void initFragment() {
+        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container_main, AddFragment.class,null).commit();
+    }
+
+    private void initGroupReminderComponents()
+    {
+        groupReminder = findViewById(R.id.group_reminder_recyleview);
+        List <Group> groupList = new ArrayList<>(Arrays.asList(
+                new Group(1,"Lịch dự kiến",1),
+                new Group(2,"Tất cả",1),
+//                new Group(3, "Hôm nay",1),
+                new Group(4,"Ngày mai",5)
+        ));
+        GridLayoutManager groupReminderLayout = new GridLayoutManager(this,2);
+        groupReminderLayout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (position == adapterGroup.getItemCount() - 1 && position % 2 == 0)
+                {
+                    return 2;
+                }
+                else return 1;
+            }
+        });
+        MarginGroupItem itemDecoration = new MarginGroupItem(30,30);
+        groupReminder.addItemDecoration(itemDecoration);
+        groupReminder.setLayoutManager(groupReminderLayout);
+        adapterGroup = new GroupAdapter(groupList);
+        groupReminder.setAdapter(adapterGroup);
+    }
+
+    private void initListReminderComponents ()
+    {
+        listReminder = findViewById(R.id.list_reminder_recycleview);
+        List<ListReminder> list = new ArrayList<>(Arrays.asList(
+                new ListReminder(1,"lmao",3),
+                new ListReminder(2,"hihi",4),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(2,"hihi",4),
+                new ListReminder(3,"bobo",5)
+
+        ));
+        listReminder.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        ListReminderAdapter adapter = new ListReminderAdapter(list);
+        listReminder.setAdapter(adapter);
+    }
+
+    private void initSearchComponents ()
+    {
+        deleteEditTextText = findViewById(R.id.delete_editText_main);
+        editTextMain = findViewById(R.id.search_bar);
+        editTextMain.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editTextMain.getText().length() == 0)
+                {
+                    deleteEditTextText.setVisibility(View.GONE);
+                }
+                else
+                {
+                    deleteEditTextText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        deleteEditTextText.setOnClickListener(v -> {
+            editTextMain.getText().clear();
+        });
+    }
+
+
+
 }

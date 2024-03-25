@@ -1,18 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.93"/>
+
+    <androidx.core.widget.NestedScrollView
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="Tìm kiếm"
+                android:drawableStart="@drawable/icon_search"
+                android:paddingStart="5dp"
+                android:drawablePadding="5dp"
+                android:textColor="@color/grey"
+                android:id="@+id/search_bar"
+                android:background="@drawable/custom_edit_text_main"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <ImageButton
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/search_bar"
+                app:layout_constraintBottom_toBottomOf="@id/search_bar"
+                app:layout_constraintRight_toRightOf="@id/search_bar"
+                android:id="@+id/delete_editText_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/delete_icon"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_reminder_recyleview"
+                android:layout_marginTop="30dp"
+                app:layout_constraintTop_toBottomOf="@id/search_bar"
+                app:layout_constraintLeft_toLeftOf="@id/search_bar"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/group_reminder_recyleview"
+                app:layout_constraintLeft_toLeftOf="@id/group_reminder_recyleview"
+                android:text="Danh sách của tôi"
+                android:layout_marginTop="30dp"
+                android:id="@+id/listHeader"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintTop_toBottomOf="@id/listHeader"
+                app:layout_constraintLeft_toLeftOf="@id/listHeader"
+                app:cardCornerRadius="15dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/list_reminder_recycleview"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <androidx.fragment.app.FragmentContainerView
+
+        android:id="@+id/fragment_container_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/guideLine_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
