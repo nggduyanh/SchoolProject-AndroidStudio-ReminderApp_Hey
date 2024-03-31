@@ -1,0 +1,28 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="Fragments.AddFragment"
+
+    android:background="@color/transparent">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:drawableStart="@drawable/add_icon"
+        android:drawablePadding="5dp"
+        android:text="Lời nhắc mới"
+        android:layout_gravity="left"
+        android:gravity="center_vertical"
+        android:textColor="@color/blue"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Thêm danh sách"
+        android:layout_gravity="right"
+        android:gravity="center_vertical"
+        android:textColor="@color/blue"/>
+
+</FrameLayout>
