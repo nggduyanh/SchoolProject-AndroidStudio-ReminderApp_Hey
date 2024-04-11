@@ -7,5 +7,14 @@
     <color name="purple">#838200F3</color>
     <color name="grey">#A09F9F</color>
     <color name="darkGrey">#D6D3D3</color>
-    <color name="transparent">#70D10D0D</color>
+    <color name="lightGrey">#E4E2E2</color>
+    <color name="transparent">#00F4F3F3</color>
+    <color name="orange">#FF9800</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="green">#8BC34A</color>
+    <color name="aqua">#8003A9F4</color>
+    <color name="crimson">#FF0099</color>
+    <color name="cyan">#AD000DFF</color>
+    <color name="peach">#FFE5E4</color>
+    <color name="MillenialPink">#F3CFC6</color>
 </resources>

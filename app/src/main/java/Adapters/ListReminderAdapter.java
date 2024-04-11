@@ -40,7 +40,7 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         ListReminder obj = list.get(position);
         holder.name.setText(obj.getListName());
-
+        holder.number.setText("" + obj.getNumberReminder());
     }
 
     @Override
