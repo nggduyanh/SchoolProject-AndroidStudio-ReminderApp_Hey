@@ -1,5 +1,9 @@
 package com.example.hey;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
@@ -8,12 +12,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -24,6 +31,7 @@ import java.util.List;
 
 import Adapters.GroupAdapter;
 import Adapters.ListReminderAdapter;
+import Adapters.ReminderAdapter;
 import Fragments.AddFragment;
 import ItemDecoration.MarginGroupItem;
 import Models.Group;
@@ -45,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout layout ;
     private Guideline g;
+    private Button b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         setMainLayoutPadding();
 
     }
+
+    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+
+        }
+    });
 
     private void setMainLayoutPadding()
     {
@@ -68,11 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 int[] p2 = new int[2];
                 g.getLocationInWindow(p);
                 getSupportFragmentManager().findFragmentById(R.id.fragment_container_main).getView().getLocationOnScreen(p2);
-
-                Log.d("phananh2","Location: "  + p[0] + " " + p[1]);
-                int resultPadding = p[1] / 90 * 10;
-                layout.setPadding(0,0,0,resultPadding);
-                Log.d("phananh","Location: " + p2[0] + " " + p2[1]);
             }
         });
     }
@@ -133,6 +144,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initSearchComponents ()
     {
+        b=findViewById(R.id.buttontest);
+        b.setOnClickListener(v->{
+            Intent intent = new Intent(this, ReminderActivity.class);
+            launcher.launch(intent);
+        });
         deleteEditTextText = findViewById(R.id.delete_editText_main);
         editTextMain = findViewById(R.id.search_bar);
         editTextMain.addTextChangedListener(new TextWatcher() {
