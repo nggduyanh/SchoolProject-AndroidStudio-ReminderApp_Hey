@@ -5,12 +5,10 @@ import android.net.Uri;
 public class ListReminder {
 
     private int id;
-
     private String listName;
-
     private int numberReminder;
-
-    private Uri icon;
+    private int icon;
+    private int color;
 
     public ListReminder(int id, String listName, int numberReminder) {
         this.id = id;
@@ -18,11 +16,12 @@ public class ListReminder {
         this.numberReminder = numberReminder;
     }
 
-    public ListReminder(int id, String listName, int numberReminder, Uri icon) {
+    public ListReminder(int id, String listName, int numberReminder, int icon, int color) {
         this.id = id;
         this.listName = listName;
         this.numberReminder = numberReminder;
         this.icon = icon;
+        this.color = color;
     }
 
     public int getId() {
@@ -49,11 +48,19 @@ public class ListReminder {
         this.numberReminder = numberReminder;
     }
 
-    public Uri getIcon() {
+    public int getIcon() {
         return icon;
     }
 
-    public void setIcon(Uri icon) {
+    public void setIcon(int icon) {
         this.icon = icon;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

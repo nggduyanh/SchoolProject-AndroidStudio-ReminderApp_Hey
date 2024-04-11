@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,30 +30,27 @@ import Fragments.AddFragment;
 import ItemDecoration.MarginGroupItem;
 import Models.Group;
 import Models.ListReminder;
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView groupReminder;
-
+    private RecyclerView groupReminderRV;
     private GroupAdapter adapterGroup;
-
-    private RecyclerView listReminder;
-
+    private RecyclerView listReminderRV;
     private ImageButton deleteEditTextText;
-
     private EditText editTextMain;
-
-    private FragmentContainerView fragmentContainerView;
-
     private ConstraintLayout layout ;
     private Guideline g;
+
+    private List <Group> groupList;
+    private List<ListReminder> listReminders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initMainActivityComponents();
-
         setMainLayoutPadding();
 
     }
@@ -66,21 +65,57 @@ public class MainActivity extends AppCompatActivity {
                 layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 int[] p = new int[2];
                 int[] p2 = new int[2];
+                Log.d("helloPa", "" + layout.getHeight() + " " + layout.getWidth());
+                Log.d("helloPa", "" + layout.getMeasuredHeight() + " " + layout.getMeasuredWidth());
                 g.getLocationInWindow(p);
                 getSupportFragmentManager().findFragmentById(R.id.fragment_container_main).getView().getLocationOnScreen(p2);
-
-                Log.d("phananh2","Location: "  + p[0] + " " + p[1]);
+//                Log.d("phananh2","Location: "  + p[0] + " " + p[1]);
                 int resultPadding = p[1] / 90 * 10;
                 layout.setPadding(0,0,0,resultPadding);
-                Log.d("phananh","Location: " + p2[0] + " " + p2[1]);
+//                Log.d("phananh","Location: " + p2[0] + " " + p2[1]);
             }
         });
     }
     private void initMainActivityComponents() {
+        initLists();
         initGroupReminderComponents();
         initListReminderComponents();
         initSearchComponents();
         initFragment();
+        setupBlur();
+    }
+
+    private void initLists() {
+
+         groupList = new ArrayList<>(Arrays.asList(
+                new Group(1,"Lịch dự kiến",1),
+                new Group(2,"Tất cả",1),
+//                new Group(3, "Hôm nay",1),
+                new Group(4,"Ngày mai",5)
+        ));
+
+        listReminders = new ArrayList<>(Arrays.asList(
+                new ListReminder(1,"lmao",3),
+                new ListReminder(2,"hihi",4),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(2,"hihi",4),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(3,"bobo",5),
+                new ListReminder(2,"hihi",4),
+                new ListReminder(3,"bobo",5)
+
+        ));
+    }
+
+    private void setupBlur() {
+        ViewGroup rootView = findViewById(R.id.root);
+        Drawable windowBackground = getWindow().getDecorView().getBackground();
+        BlurView blur = findViewById(R.id.blur_fragment);
+        blur.setupWith(rootView,new RenderScriptBlur(this))
+                .setFrameClearDrawable(windowBackground)
+                .setBlurRadius(15f)
+                .setBlurAutoUpdate(true);
     }
 
     private void initFragment() {
@@ -89,13 +124,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initGroupReminderComponents()
     {
-        groupReminder = findViewById(R.id.group_reminder_recyleview);
-        List <Group> groupList = new ArrayList<>(Arrays.asList(
-                new Group(1,"Lịch dự kiến",1),
-                new Group(2,"Tất cả",1),
-//                new Group(3, "Hôm nay",1),
-                new Group(4,"Ngày mai",5)
-        ));
+        groupReminderRV = findViewById(R.id.group_reminder_recyleview);
+
         GridLayoutManager groupReminderLayout = new GridLayoutManager(this,2);
         groupReminderLayout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -108,27 +138,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         MarginGroupItem itemDecoration = new MarginGroupItem(30,30);
-        groupReminder.addItemDecoration(itemDecoration);
-        groupReminder.setLayoutManager(groupReminderLayout);
+        groupReminderRV.addItemDecoration(itemDecoration);
+        groupReminderRV.setLayoutManager(groupReminderLayout);
         adapterGroup = new GroupAdapter(groupList);
-        groupReminder.setAdapter(adapterGroup);
+        groupReminderRV.setAdapter(adapterGroup);
     }
 
     private void initListReminderComponents ()
     {
-        listReminder = findViewById(R.id.list_reminder_recycleview);
-        List<ListReminder> list = new ArrayList<>(Arrays.asList(
-                new ListReminder(1,"lmao",3),
-                new ListReminder(2,"hihi",4),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(2,"hihi",4),
-                new ListReminder(3,"bobo",5)
-
-        ));
-        listReminder.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        ListReminderAdapter adapter = new ListReminderAdapter(list);
-        listReminder.setAdapter(adapter);
+        listReminderRV = findViewById(R.id.list_reminder_recycleview);
+        listReminderRV.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        ListReminderAdapter adapter = new ListReminderAdapter(listReminders);
+        listReminderRV.setAdapter(adapter);
     }
 
     private void initSearchComponents ()
@@ -137,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
         editTextMain = findViewById(R.id.search_bar);
         editTextMain.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
 
             }
 
@@ -163,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void addListReminder (ListReminder newListReminder)
+    {
+        listReminders.add(newListReminder);
+        listReminderRV.getAdapter().notifyDataSetChanged();
+    }
 
 
 }
