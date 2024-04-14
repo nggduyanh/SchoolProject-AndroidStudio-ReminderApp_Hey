@@ -117,6 +117,11 @@ public class ReminderDetailFragment extends Fragment  {
 
     public ReminderDetailFragment(ReminderCreateFragment siblingFragment) {
         this.siblingFragment = siblingFragment;
+
+    }
+    public ReminderDetailFragment(ReminderCreateFragment siblingFragment,Dialog d) {
+        this.siblingFragment = siblingFragment;
+        this.d = d;
     }
 
     public ReminderDetailFragment()
@@ -136,10 +141,10 @@ public class ReminderDetailFragment extends Fragment  {
         return fragment;
     }
 
-    public static ReminderDetailFragment newInstance(ReminderCreateFragment siblingFragment) {
+    public static ReminderDetailFragment newInstance(ReminderCreateFragment siblingFragment,Dialog d) {
 
         Bundle args = new Bundle();
-        ReminderDetailFragment fragment = new ReminderDetailFragment(siblingFragment);
+        ReminderDetailFragment fragment = new ReminderDetailFragment(siblingFragment, d);
         fragment.setArguments(args);
         return fragment;
     }
@@ -233,6 +238,7 @@ public class ReminderDetailFragment extends Fragment  {
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
             DbContext.getInstance(getContext()).add(r);
+
         });
 
         cancelBtn.setOnClickListener(v -> {
