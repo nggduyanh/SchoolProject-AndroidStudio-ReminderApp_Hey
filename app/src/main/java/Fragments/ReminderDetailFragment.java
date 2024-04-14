@@ -2,6 +2,7 @@ package Fragments;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -76,6 +77,8 @@ public class ReminderDetailFragment extends Fragment  {
     private LocalDate date;
     private LocalTime time;
 
+    private Dialog d;
+
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
@@ -106,8 +109,9 @@ public class ReminderDetailFragment extends Fragment  {
         }
     });
 
-    public ReminderDetailFragment(ReminderCreateFragment siblingFragment) {
+    public ReminderDetailFragment(ReminderCreateFragment siblingFragment,Dialog d) {
         this.siblingFragment = siblingFragment;
+        this.d = d;
     }
 
     public ReminderDetailFragment()
@@ -122,10 +126,10 @@ public class ReminderDetailFragment extends Fragment  {
         return fragment;
     }
 
-    public static ReminderDetailFragment newInstance(ReminderCreateFragment siblingFragment) {
+    public static ReminderDetailFragment newInstance(ReminderCreateFragment siblingFragment,Dialog d) {
 
         Bundle args = new Bundle();
-        ReminderDetailFragment fragment = new ReminderDetailFragment(siblingFragment);
+        ReminderDetailFragment fragment = new ReminderDetailFragment(siblingFragment, d);
         fragment.setArguments(args);
         return fragment;
     }
@@ -219,6 +223,7 @@ public class ReminderDetailFragment extends Fragment  {
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
             DbContext.getInstance(getContext()).add(r);
+
         });
 
         cancelBtn.setOnClickListener(v -> {

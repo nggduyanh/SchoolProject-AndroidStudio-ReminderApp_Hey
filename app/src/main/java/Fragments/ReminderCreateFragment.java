@@ -123,7 +123,7 @@ public class ReminderCreateFragment extends Fragment
             getParentFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(android.R.anim.slide_in_left,0 ,0, android.R.anim.slide_out_right)
-                    .replace(R.id.fragment_container,ReminderDetailFragment.newInstance(this))
+                    .replace(R.id.fragment_container,ReminderDetailFragment.newInstance(this,d))
                     .addToBackStack(null)
                     .commit();
         });

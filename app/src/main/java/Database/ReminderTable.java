@@ -27,7 +27,7 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
     @Override
     public void createTable(SQLiteDatabase db) {
-        String sql = String.format("create table if not exists %s (%s Integer PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach)) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,ListReminderFK);
+        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach)) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,ListReminderFK);
         db.execSQL(sql);
     }
 
@@ -40,7 +40,6 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
     @Override
     public void add(SQLiteDatabase db, Reminder obj) {
         ContentValues values = new ContentValues();
-        values.put(ID,obj.getId());
         values.put(name,obj.getReminderName());
         values.put(date,obj.getDate() == null ? null : obj.getDate().toString());
         values.put(hour,obj.getTime() == null ? null : obj.getTime().toString());
@@ -64,7 +63,6 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
     @Override
     public void update(SQLiteDatabase db, Reminder obj) {
         ContentValues values = new ContentValues();
-        values.put(ID,obj.getId());
         values.put(name,obj.getReminderName());
         values.put(date,obj.getDate() == null ? null : obj.getDate().toString());
         values.put(hour,obj.getTime() == null ? null : obj.getTime().toString());
@@ -91,8 +89,8 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                             cursor.getInt(0),
                             cursor.getString(1),
                             cursor.getInt(4) == 1,
-                            LocalDate.parse(cursor.getString(2)),
-                            LocalTime.parse(cursor.getString(3)));
+                            cursor.getString(3) == null ? null : LocalDate.parse(cursor.getString(3)),
+                            cursor.getString(4) == null ? null: LocalTime.parse(cursor.getString(4)));
                 }
                 list.add(reminder);
             }
@@ -115,8 +113,8 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                             cursor.getInt(0),
                             cursor.getString(1),
                             cursor.getInt(4) == 1,
-                            cursor.getString(2) == null ? null : LocalDate.parse(cursor.getString(2)),
-                            cursor.getString(3) == null ? null: LocalTime.parse(cursor.getString(3)));
+                            cursor.getString(3) == null ? null : LocalDate.parse(cursor.getString(3)),
+                            cursor.getString(4) == null ? null: LocalTime.parse(cursor.getString(4)));
                 }
                 list.add(reminder);
             }
