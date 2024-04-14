@@ -66,6 +66,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 getChildFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container,ReminderCreateFragment.newInstance(dialog),null).commit();
             }
             break;
+            case REMINDER_ADD:
+            {
+                getChildFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container,ReminderDetailFragment.newInstance(dialog),null).commit();
+            }
+            break;
 
         }
         return dialog;

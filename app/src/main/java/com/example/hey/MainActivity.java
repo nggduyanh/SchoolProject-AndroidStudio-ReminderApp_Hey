@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFragment() {
-        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container_main, AddFragment.class,null).commit();
+        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container_main, AddFragment.newInstance(AddFragment.PhanAnh_MODE,this),null).commit();
     }
 
     private void initGroupReminderComponents()
@@ -169,11 +169,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void initSearchComponents ()
     {
-//        b=findViewById(R.id.buttontest);
-//        b.setOnClickListener(v->{
-//            Intent intent = new Intent(this, ReminderActivity.class);
-//            launcher.launch(intent);
-//        });
+        b=findViewById(R.id.buttontest);
+        b.setOnClickListener(v->{
+            Intent intent = new Intent(this, ReminderActivity.class);
+            launcher.launch(intent);
+        });
+
         deleteEditTextText = findViewById(R.id.delete_editText_main);
         editTextMain = findViewById(R.id.search_bar);
         editTextMain.addTextChangedListener(new TextWatcher() {

@@ -2,6 +2,7 @@ package Fragments;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -68,6 +69,7 @@ public class ReminderDetailFragment extends Fragment  {
     private RecyclerView photoRv;
     private PhotoAdapter adapter;
     private Uri photoURI;
+    private Dialog d;
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -96,6 +98,10 @@ public class ReminderDetailFragment extends Fragment  {
         }
     });
 
+    public ReminderDetailFragment(Dialog d){
+        this.d=d;
+    }
+
     public ReminderDetailFragment(ReminderCreateFragment siblingFragment) {
         this.siblingFragment = siblingFragment;
     }
@@ -104,7 +110,12 @@ public class ReminderDetailFragment extends Fragment  {
     {
 
     }
-
+    public static ReminderDetailFragment newInstance(Dialog d){
+        Bundle args = new Bundle();
+        ReminderDetailFragment fragment = new ReminderDetailFragment(d);
+        fragment.setArguments(args);
+        return fragment;
+    }
     public static ReminderDetailFragment newInstance() {
         Bundle args = new Bundle();
         ReminderDetailFragment fragment = new ReminderDetailFragment();

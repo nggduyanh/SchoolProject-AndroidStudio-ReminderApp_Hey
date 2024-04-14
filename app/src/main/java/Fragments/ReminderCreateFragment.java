@@ -94,7 +94,6 @@ public class ReminderCreateFragment extends Fragment
                     .replace(R.id.fragment_container,ListChooseFragment.newInstance(this))
                     .addToBackStack(null)
                     .commit();
-
         });
 
         reminderDetail.setOnClickListener(v -> {

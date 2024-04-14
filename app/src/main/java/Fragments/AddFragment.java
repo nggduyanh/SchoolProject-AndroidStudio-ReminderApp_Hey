@@ -1,15 +1,19 @@
 package Fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.service.voice.VoiceInteractionSession;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.hey.R;
+import com.example.hey.ReminderActivity;
 
 
 /**
@@ -19,25 +23,21 @@ import com.example.hey.R;
  */
 public class AddFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-
-    private String mParam1;
-    private String mParam2;
     private int mode;
 
+    public static final int PhanAnh_MODE = 1;
+    public static final int DuyAnh_MODE=2;
     private TextView addGroup,addReminder;
+    private Activity activity;
+
 
     public AddFragment()
     {
     }
 
-    public AddFragment(int mode){
+    public AddFragment(int mode,Activity reminderActivity){
         this.mode =mode;
+        this.activity = reminderActivity;
     }
 
     public static AddFragment newInstance() {
@@ -45,10 +45,9 @@ public class AddFragment extends Fragment {
         return fragment;
     }
 
-    public static AddFragment newInstance(int mode) {
+    public static AddFragment newInstance(int mode,Activity r) {
 
-        AddFragment fragment = new AddFragment(mode);
-
+        AddFragment fragment = new AddFragment(mode,r);
         return fragment;
     }
 
@@ -56,8 +55,6 @@ public class AddFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
     }
@@ -76,24 +73,32 @@ public class AddFragment extends Fragment {
         addGroup = v.findViewById(R.id.addGroup);
         addReminder = v.findViewById(R.id.addReminder);
 
+        if (mode == DuyAnh_MODE) addGroup.setVisibility(View.GONE);
+
         addGroup.setOnClickListener(view ->
         {
-            if (mode == 1)
-            {
-                BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.LIST_CREATE);
-                groupFragment.show(getChildFragmentManager(), groupFragment.getTag());
-            }
-            else
-            {
-
-            }
+            BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.LIST_CREATE);
+            groupFragment.show(getChildFragmentManager(), groupFragment.getTag());
         });
 
         addReminder.setOnClickListener(view ->
         {
-            BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_CREATE);
-            groupFragment.show(getChildFragmentManager(), groupFragment.getTag());
-
+            if (mode == PhanAnh_MODE)
+            {
+                BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_CREATE);
+                groupFragment.show(getChildFragmentManager(), groupFragment.getTag());
+            }
+            else
+            {
+                ReminderActivity act = (ReminderActivity) activity;
+                act.addReminder();
+            }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("phananh","" + mode);
     }
 }
