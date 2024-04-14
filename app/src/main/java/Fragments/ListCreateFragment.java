@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +33,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import Adapters.ListColorAdapter;
 import Adapters.ListCreateViewHolder;
 import Adapters.ListIconAdapter;
+import Database.DbContext;
 import Interfaces.IClickListAdd;
+import Interfaces.IUpdateDatabase;
 import Models.ListReminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -48,6 +52,7 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
     private int[] arrIcon;
     private BlurView headerBlur;
     private Dialog dialogParent;
+    private int iconChoosed, colorChoosed;
 
     public ListCreateFragment()
     {
@@ -179,9 +184,11 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         });
 
         addButton.setOnClickListener(v -> {
-            ListReminder newListReminder = new ListReminder(1,listName.getText().toString(),100);
-            MainActivity father = (MainActivity) getActivity();
-            father.addListReminder(newListReminder);
+            Toast.makeText(getContext(), "d", Toast.LENGTH_SHORT).show();
+            ListReminder newListReminder = new ListReminder(listName.getText().toString(),iconChoosed,colorChoosed);
+            IUpdateDatabase father = (IUpdateDatabase) getActivity();
+            DbContext.getInstance(getContext()).add(newListReminder);
+            father.updateInterface();
             dialog.dismiss();
         });
     }
@@ -212,9 +219,9 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
 
     @Override
     public void setEnable(ListCreateViewHolder holder, int length) {
+        RecyclerView parent = (RecyclerView) holder.itemView.getParent();
         for (int i=0; i < length;i++)
         {
-            RecyclerView parent = (RecyclerView) holder.itemView.getParent();
             ListCreateViewHolder vh = (ListCreateViewHolder) parent.findViewHolderForAdapterPosition(i);
             vh.getOutline().setVisibility(View.INVISIBLE);
         }
@@ -225,15 +232,19 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
     public void setColor(ListCreateViewHolder holder)
     {
         int pos = colorRV.getChildLayoutPosition(holder.itemView);
+        if (pos == -1) pos = 0;
         iconResult.getBackground().setTint(arrColor[pos]);
         listName.setTextColor(arrColor[pos]);
+        colorChoosed = arrColor[pos];
     }
 
     @Override
     public void setIcon(ListCreateViewHolder holder)
     {
         int pos = iconRV.getChildLayoutPosition(holder.itemView);
+        if (pos == -1 ) pos = 0;
         iconResult.setImageResource(arrIcon[pos]);
+        iconChoosed = arrIcon[pos];
     }
 
     private void initSearchEvent ()
@@ -249,12 +260,12 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
                 if (listName.getText().length() > 0)
                 {
                     deleteBtn.setVisibility(View.VISIBLE);
-                    addButton.setTextColor(ContextCompat.getColor(getContext(),R.color.blue));
+                    addButton.setEnabled(true);
                 }
                 else
                 {
                     deleteBtn.setVisibility(View.INVISIBLE);
-                    addButton.setTextColor(ContextCompat.getColor(getContext(),R.color.grey));
+                    addButton.setEnabled(false);
                 }
             }
 

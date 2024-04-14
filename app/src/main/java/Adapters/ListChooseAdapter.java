@@ -45,7 +45,9 @@ public class ListChooseAdapter extends RecyclerView.Adapter<ListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         ListReminder obj = list.get(position);
-
+        holder.icon.setEnabled(false);
+        holder.icon.setImageResource(obj.getIcon());
+        holder.icon.getBackground().setTint(obj.getColor());
         holder.number.setVisibility(View.INVISIBLE);
         holder.name.setText(obj.getListName());
         holder.nextIcon.setImageResource(R.drawable.icon_tick);

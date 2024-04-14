@@ -35,6 +35,7 @@ public class AddFragment extends Fragment {
     {
     }
 
+
     public AddFragment(int mode,Activity reminderActivity){
         this.mode =mode;
         this.activity = reminderActivity;
@@ -54,9 +55,6 @@ public class AddFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
-
     }
 
     @Override
@@ -83,6 +81,7 @@ public class AddFragment extends Fragment {
 
         addReminder.setOnClickListener(view ->
         {
+
             if (mode == PhanAnh_MODE)
             {
                 BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_CREATE);
@@ -93,6 +92,7 @@ public class AddFragment extends Fragment {
                 ReminderActivity act = (ReminderActivity) activity;
                 act.addReminder();
             }
+
         });
     }
 

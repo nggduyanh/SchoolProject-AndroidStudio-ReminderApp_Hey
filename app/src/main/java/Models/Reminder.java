@@ -3,24 +3,32 @@ package Models;
 import android.net.Uri;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
+
 
 public class Reminder {
+    private String note;
+    private ListReminder listReminder;
     private int id;
     private String reminderName;
-    private Uri image;
-    private Boolean status,flag;
+
+    private List<Uri> image;
+    private boolean status,flag;
 
     private LocalDate date;
     private LocalTime time;
-    public Reminder(int id, String reminderName){
-        this.id =id;
-        this.reminderName=reminderName;
-        this.status=false;
-        this.flag=false;
+    public Reminder() {
+        image = new ArrayList<>();
+    }
+
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
     }
 
     public Boolean getFlag() {
@@ -71,11 +79,39 @@ public class Reminder {
         this.reminderName = reminderName;
     }
 
-    public Uri getImage() {
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
+    public List<Uri> getImage() {
         return image;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(List<Uri> image) {
         this.image = image;
     }
+
+    public void addImage (Uri uri)
+    {
+        image.add(uri);
+    }
+
+    public ListReminder getListReminder() {
+        return listReminder;
+    }
+
+    public void setListReminder(ListReminder listReminder) {
+        this.listReminder = listReminder;
+    }
+
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
+

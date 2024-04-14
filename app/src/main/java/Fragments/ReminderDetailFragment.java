@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -49,12 +51,15 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import Adapters.PhotoAdapter;
+import Database.DbContext;
 import Interfaces.IClickPhotoAdd;
+import Models.Reminder;
 
 public class ReminderDetailFragment extends Fragment  {
     private static final String title = "Chi tiết";
@@ -62,14 +67,19 @@ public class ReminderDetailFragment extends Fragment  {
     private ReminderCreateFragment siblingFragment;
     private CalendarView calendar;
     private TextView dateTv,timeTv;
-    private SwitchCompat dateSwitch,timeSwitch;
+    private SwitchCompat dateSwitch,timeSwitch,flagSwitch;
     private TimePicker timePicker;
     private CardView dateCard;
     private TextView photoAddTv;
     private RecyclerView photoRv;
-    private PhotoAdapter adapter;
     private Uri photoURI;
+
     private Dialog d;
+
+    private PhotoAdapter adapter;
+    private LocalDate date;
+    private LocalTime time;
+
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -93,8 +103,11 @@ public class ReminderDetailFragment extends Fragment  {
     private ActivityResultLauncher<Intent> intentActivityPhotoResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
-            adapter.getPhotos().add(photoURI);
-            adapter.notifyDataSetChanged();
+            if (o.getResultCode() == -1)
+            {
+                adapter.getPhotos().add(photoURI);
+                adapter.notifyDataSetChanged();
+            }
         }
     });
 
@@ -143,44 +156,105 @@ public class ReminderDetailFragment extends Fragment  {
         setTitle();
         initEvent();
         initRecycleView ();
+
+        BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
+        if (parent.getReminderInstance().getDate() != null)
+        {
+            dateSwitch.setChecked(true);
+        }
+        if (parent.getReminderInstance().getTime() != null)
+        {
+            timeSwitch.setChecked(true);
+        }
+
+        flagSwitch.setChecked(parent.getReminderInstance().getFlag());
         return v;
     }
 
     private void initRecycleView()
     {
         LinearLayoutManager layout = new LinearLayoutManager(getContext());
-        List<Uri> photoList = new ArrayList<>();
+        BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
+        List<Uri> photoList = parent.getReminderInstance().getImage();
         adapter = new PhotoAdapter(photoList, new IClickPhotoAdd() {
             @Override
             public void removePhoto(int position) {
                 adapter.getPhotos().remove(position);
                 adapter.notifyDataSetChanged();
+                parent.getReminderInstance().getImage().remove(position);
             }
         });
         photoRv.setAdapter(adapter);
         photoRv.setLayoutManager(layout);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void renderDateAndSetLocalDateVariable (int year, int month, int dayOfMonth)
+    {
+            String dateString = checkDaysBetweenDates (LocalDate.of(year,month+1,dayOfMonth).atStartOfDay(),LocalDate.now().atStartOfDay());
+            if (dateString.length() == 0)
+            {
+                dateString = String.format("ngày %d tháng %d, %d", dayOfMonth, month + 1, year);
+                dateString = getDayOfWeek(LocalDate.of(year, month + 1, dayOfMonth).getDayOfWeek().toString()) + ", " + dateString;
+            }
+            dateTv.setText(dateString);
+            date = LocalDate.of(year,month + 1,dayOfMonth);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void renderTimeAndSetLocalTimeVariable (int hourOfDay, int minute)
+    {
+        String additionalText = "";
+        if (!DateFormat.is24HourFormat(getContext()))
+        {
+            if (hourOfDay > 12)
+            {
+                hourOfDay = hourOfDay - 12;
+                additionalText += "PM";
+            }
+            else additionalText += "AM";
+        }
+        String text = "";
+        if (hourOfDay < 10) text += "0";
+        text += hourOfDay + ":";
+        if (minute < 10) text += "0";
+        text += minute + "";
+        timeTv.setText(text + " " + additionalText);
+        time = LocalTime.of(hourOfDay,minute);
+
+    }
+
     private void initEvent()
     {
+        BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
+
+        addBtn.setOnClickListener(v -> {
+            parent.getReminderInstance().setDate(date);
+            parent.getReminderInstance().setTime(time);
+            Reminder r = parent.getReminderInstance();
+            DbContext.getInstance(getContext()).add(r);
+        });
 
         cancelBtn.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack();
-            getParentFragmentManager().beginTransaction().remove(this).commit();
+            if (siblingFragment != null)
+            {
+                getParentFragmentManager().popBackStack();
+                getParentFragmentManager().beginTransaction().remove(this).commit();
+                String s = "";
+                if (timeTv.getVisibility() == View.VISIBLE) s+= timeTv.getText() + ", ";
+                if (dateTv.getVisibility() == View.VISIBLE) s+= dateTv.getText();
+                siblingFragment.setTextDateTime(s);
+
+                parent.getReminderInstance().setDate(date);
+                parent.getReminderInstance().setTime(time);
+            }
         });
 
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                {
-                    String dateString = checkDaysBetweenDates (LocalDate.of(year,month+1,dayOfMonth).atStartOfDay(),LocalDate.now().atStartOfDay());
-                    if (dateString.length() == 0)
-                    {
-                        dateString = String.format("ngày %d tháng %d, %d", dayOfMonth, month + 1, year);
-                        dateString = getDayOfWeek(LocalDate.of(year, month + 1, dayOfMonth).getDayOfWeek().toString()) + " , " + dateString;
-                    }
-                    dateTv.setText(dateString);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    renderDateAndSetLocalDateVariable(year, month, dayOfMonth);
                 }
             }
         });
@@ -190,6 +264,19 @@ public class ReminderDetailFragment extends Fragment  {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (dateSwitch.isChecked())
                 {
+                    if (date == null && parent.getReminderInstance().getDate() == null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            LocalDate today = LocalDate.now();
+                            renderDateAndSetLocalDateVariable(today.getYear(),today.getMonth().getValue() - 1,today.getDayOfMonth());
+                        }
+                    }
+                    else if (date == null && parent.getReminderInstance().getDate() != null)
+                    {
+                        LocalDate date = parent.getReminderInstance().getDate();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            renderDateAndSetLocalDateVariable(date.getYear(),date.getMonthValue() - 1, date.getDayOfMonth());
+                        }
+                    }
                     dateTv.setVisibility(View.VISIBLE);
                     calendar.setVisibility(View.VISIBLE);
                     calendar.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_down));
@@ -233,23 +320,9 @@ public class ReminderDetailFragment extends Fragment  {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute)
             {
-                String additionalText = "";
-                if (!android.text.format.DateFormat.is24HourFormat(getContext()))
-                {
-                    if (hourOfDay > 12)
-                    {
-                        hourOfDay = hourOfDay - 12;
-                        additionalText += "PM";
-                    }
-                    else additionalText += "AM";
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    renderTimeAndSetLocalTimeVariable(hourOfDay,minute);
                 }
-                String text = "";
-                if (hourOfDay < 10) text += "0";
-                text += hourOfDay + ":";
-                if (minute < 10) text += "0";
-                text += minute + "";
-                timeTv.setText(text + " " + additionalText);
-
             }
         });
 
@@ -258,6 +331,21 @@ public class ReminderDetailFragment extends Fragment  {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (timeSwitch.isChecked())
                 {
+                    dateSwitch.setChecked(true);
+                    if (time == null && parent.getReminderInstance().getTime() == null)
+                    {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            LocalTime now = LocalTime.now();
+                            renderTimeAndSetLocalTimeVariable(now.getHour(),now.getMinute());
+                        }
+                    }
+                    else if (time == null && parent.getReminderInstance().getTime() != null)
+                    {
+                        LocalTime date = parent.getReminderInstance().getTime();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            renderTimeAndSetLocalTimeVariable(date.getHour(), date.getMinute());
+                        }
+                    }
                     timeTv.setVisibility(View.VISIBLE);
                     timePicker.setVisibility(View.VISIBLE);
                     timePicker.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_down));
@@ -299,6 +387,20 @@ public class ReminderDetailFragment extends Fragment  {
         photoAddTv.setOnClickListener(v -> {
             photoAddTv.showContextMenu(photoAddTv.getX() ,photoAddTv.getY());
         });
+
+        flagSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (flagSwitch.isChecked())
+                {
+                    parent.getReminderInstance().setFlag(true);
+                }
+                else
+                {
+                    parent.getReminderInstance().setFlag(false);
+                }
+            }
+        });
     }
 
     private String checkDaysBetweenDates(LocalDateTime now, LocalDateTime date)
@@ -321,12 +423,24 @@ public class ReminderDetailFragment extends Fragment  {
         addBtn.setText("Thêm");
         cancelBtn.setText("Quay lại");
         cancelBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.back_icon,0,0,0);
+
     }
 
     private void initComponent (View view)
     {
         cancelBtn = view.findViewById(R.id.cancel_bottom_sheet);
         addBtn = view.findViewById(R.id.add_bottom_sheet);
+        BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
+        if (parent.getReminderInstance().getReminderName() == null || parent.getReminderInstance().getReminderName().length() == 0)
+        {
+            addBtn.setEnabled(false);
+        }
+
+        else if (parent.getReminderInstance().getReminderName().length() != 0)
+        {
+            addBtn.setEnabled(true);
+        }
+
         titleTv = view.findViewById(R.id.header_bottom_sheet);
         calendar = view.findViewById(R.id.calendar_choose);
         calendar.setVisibility(View.GONE);
@@ -338,12 +452,14 @@ public class ReminderDetailFragment extends Fragment  {
         {
             timePicker.setIs24HourView(true);
         }
+
         dateCard = view.findViewById(R.id.calendar_container);
         timeSwitch = view.findViewById(R.id.timeSwitch);
         photoRv = view.findViewById(R.id.photoImages);
         photoAddTv = view.findViewById(R.id.addPhoto);
         registerForContextMenu(photoAddTv);
         photoAddTv.setOnCreateContextMenuListener(this);
+        flagSwitch = view.findViewById(R.id.flagSwitch);
     }
 
     private String getDayOfWeek (String day)
@@ -357,7 +473,7 @@ public class ReminderDetailFragment extends Fragment  {
             case "WEDNESDAY":
                 return "Thứ Tư";
             case "THURSDAY":
-                return "Thú Năm";
+                return "Thứ Năm";
             case "FRIDAY":
                 return "Thứ Sáu";
             case "SATURDAY":

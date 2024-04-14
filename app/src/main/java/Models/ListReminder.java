@@ -10,14 +10,30 @@ public class ListReminder {
     private int icon;
     private int color;
 
+    public ListReminder() {
+    }
+
     public ListReminder(int id, String listName, int numberReminder) {
         this.id = id;
         this.listName = listName;
         this.numberReminder = numberReminder;
     }
 
+    public ListReminder(String listName, int icon, int color) {
+        this.listName = listName;
+        this.icon = icon;
+        this.color = color;
+    }
+
     public ListReminder(int id, String listName, int numberReminder, int icon, int color) {
         this.id = id;
+        this.listName = listName;
+        this.numberReminder = numberReminder;
+        this.icon = icon;
+        this.color = color;
+    }
+
+    public ListReminder(String listName, int numberReminder, int icon, int color) {
         this.listName = listName;
         this.numberReminder = numberReminder;
         this.icon = icon;
