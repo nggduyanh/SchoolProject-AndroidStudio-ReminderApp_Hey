@@ -40,12 +40,11 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
     @Override
     public void add(SQLiteDatabase db, Reminder obj) {
         ContentValues values = new ContentValues();
-        values.put(ID,obj.getId());
         values.put(name,obj.getReminderName());
         values.put(date,obj.getDate() == null ? null : obj.getDate().toString());
         values.put(hour,obj.getTime() == null ? null : obj.getTime().toString());
         values.put(flag,obj.getFlag() ? 1 : 0);
-//        values.put(note,obj.getNote());
+        values.put(note,obj.getNote());
         values.put(ListReminderFK,obj.getListReminder().getId());
         db.insert(tableName,null,values);
         db.close();
@@ -64,7 +63,6 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
     @Override
     public void update(SQLiteDatabase db, Reminder obj) {
         ContentValues values = new ContentValues();
-        values.put(ID,obj.getId());
         values.put(name,obj.getReminderName());
         values.put(date,obj.getDate() == null ? null : obj.getDate().toString());
         values.put(hour,obj.getTime() == null ? null : obj.getTime().toString());
@@ -91,8 +89,8 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                             cursor.getInt(0),
                             cursor.getString(1),
                             cursor.getInt(4) == 1,
-                            LocalDate.parse(cursor.getString(2)),
-                            LocalTime.parse(cursor.getString(3)));
+                            cursor.getString(2)==null?null:LocalDate.parse(cursor.getString(2)),
+                            cursor.getString(3)==null?null:LocalTime.parse(cursor.getString(3)));
                 }
                 list.add(reminder);
             }

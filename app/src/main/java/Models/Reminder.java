@@ -29,7 +29,17 @@ public class Reminder {
         this.flag = flag;
         this.date = date;
         this.time = time;
+        this.status= false;
     }
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
+        this.status= status;
+    }
+
 
     public Boolean getFlag() {
         return flag;

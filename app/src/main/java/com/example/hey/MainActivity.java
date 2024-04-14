@@ -41,6 +41,7 @@ import Database.DatabaseReminder;
 import Database.DbContext;
 
 import Fragments.AddFragment;
+import Interfaces.ICallReminderActivity;
 import Interfaces.IUpdateDatabase;
 import ItemDecoration.ItemDivider;
 import ItemDecoration.MarginGroupItem;
@@ -49,7 +50,7 @@ import Models.ListReminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
+public class MainActivity extends AppCompatActivity implements IUpdateDatabase, ICallReminderActivity {
 
     private RecyclerView groupReminderRV;
     private GroupAdapter adapterGroup;
@@ -71,12 +72,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
 
     }
 
-    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-
-        }
-    });
 
     private void setMainLayoutPadding()
     {
@@ -161,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
     {
         listReminderRV = findViewById(R.id.list_reminder_recycleview);
         listReminderRV.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        ListReminderAdapter adapter = new ListReminderAdapter(listReminders);
+        ListReminderAdapter adapter = new ListReminderAdapter(listReminders,this);
+
         ItemDivider decoration  = new ItemDivider(this, DividerItemDecoration.VERTICAL);
         listReminderRV.setAdapter(adapter);
         listReminderRV.addItemDecoration(decoration);
@@ -210,7 +206,22 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
     public void updateInterface()
     {
         listReminders = DbContext.getInstance(this).getListReminder();
-        listReminderRV.setAdapter(new ListReminderAdapter(listReminders));
+        listReminderRV.setAdapter(new ListReminderAdapter(listReminders,this));
         Toast.makeText(this, DbContext.getInstance(this).getReminder().size() + "", Toast.LENGTH_SHORT).show();
     }
+
+    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+
+        }
+    });
+
+    @Override
+    public void intentCall() {
+        Intent intent = new Intent(this,ReminderActivity.class);
+        launcher.launch(intent);
+    }
+
+
 }

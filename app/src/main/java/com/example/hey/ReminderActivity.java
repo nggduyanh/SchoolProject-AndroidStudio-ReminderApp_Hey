@@ -32,6 +32,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -74,7 +75,7 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     });
     public void addReminder(){
         reminderList.clearFocus();
-        list.add(new Reminder(6,""));
+//        list.add(new Reminder(6,""));
         adapter.notifyDataSetChanged();
     }
 
@@ -107,11 +108,13 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
 
         reminderList = findViewById(R.id.reminder_list) ;
 
-        list= new ArrayList<>(Arrays.asList(
-                new Reminder(1,"Thức dậy"),
-                new Reminder(2,"Đánh răng"),
-                new Reminder(3,"Đi học")
-        ));
+//        list= new ArrayList<>(Arrays.asList(
+//                new Reminder(1,"Thức dậy"),
+//                new Reminder(2,"Đánh răng"),
+//                new Reminder(3,"Đi học")
+//        ));
+//        int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status
+        list = new ArrayList<>();
 
         reminderList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
