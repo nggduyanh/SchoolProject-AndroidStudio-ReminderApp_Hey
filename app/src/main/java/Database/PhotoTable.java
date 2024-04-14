@@ -26,7 +26,7 @@ public class PhotoTable implements IDatabaseTable<Photo> {
     @Override
     public void createTable(SQLiteDatabase db) {
 
-        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s Integer, FOREIGN KEY (%s) REFERENCES LoiNhac(IdLoiNhac))", tableName,ID,UriPhoto,ReminderFK,ReminderFK);
+        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s Integer, FOREIGN KEY (%s) REFERENCES LoiNhac(IdLoiNhac) ON DELETE CASADE)", tableName,ID,UriPhoto,ReminderFK,ReminderFK);
         db.execSQL(sql);
     }
 

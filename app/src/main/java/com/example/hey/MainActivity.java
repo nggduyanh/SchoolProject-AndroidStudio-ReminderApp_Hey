@@ -193,6 +193,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
     {
         listReminders = DbContext.getInstance(this).getListReminder();
         listReminderRV.setAdapter(new ListReminderAdapter(listReminders));
-        Toast.makeText(this, DbContext.getInstance(this).getReminder().size() + "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, DbContext.getInstance(this).getLastRowReminder().getReminderName() + "", Toast.LENGTH_SHORT).show();
     }
 }
