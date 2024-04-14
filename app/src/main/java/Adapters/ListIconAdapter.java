@@ -32,7 +32,12 @@ public class ListIconAdapter extends RecyclerView.Adapter<ListCreateViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ListCreateViewHolder holder, int position) {
         holder.icon.setBackground(iconDrawable[position]);
-        holder.outline.setVisibility(View.INVISIBLE);
+        if (position != 0 ) holder.outline.setVisibility(View.INVISIBLE);
+        else
+        {
+            holder.outline.setVisibility(View.VISIBLE);
+            clickCallback.setIcon(holder);
+        }
         holder.container.setOnClickListener(v -> {
             clickCallback.setEnable(holder,iconDrawable.length);
             clickCallback.setIcon(holder);

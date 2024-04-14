@@ -5,4 +5,9 @@
         <item name="cardCornerRadius">30dp</item>
         <item name="android:layout_marginBottom">20dp</item>
     </style>
+
+    <style name="myTextViewColor" parent="Widget.AppCompat.TextView">
+
+        <item name="android:textColorPrimary">@color/color_selector_text_view</item>
+    </style>
 </resources>

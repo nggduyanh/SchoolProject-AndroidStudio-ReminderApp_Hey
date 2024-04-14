@@ -32,13 +32,20 @@ public class ListColorAdapter extends RecyclerView.Adapter<ListCreateViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ListCreateViewHolder holder, int position) {
+
         holder.color.getBackground().setTint(listColorId[position]);
         holder.color.setEnabled(false);
-        holder.outline.setVisibility(View.INVISIBLE);
+        if (position != 0) holder.outline.setVisibility(View.INVISIBLE);
+        else {
+            holder.outline.setVisibility(View.VISIBLE);
+            clickCallback.setColor(holder);
+        }
         holder.container.setOnClickListener(v -> {
             clickCallback.setEnable(holder,listColorId.length);
             clickCallback.setColor(holder);
         });
+
+
         FlexboxLayoutManager.LayoutParams lp = (FlexboxLayoutManager.LayoutParams) holder.container.getLayoutParams();
         lp.setFlexBasisPercent(0.16f);
         lp.height = lp.width;

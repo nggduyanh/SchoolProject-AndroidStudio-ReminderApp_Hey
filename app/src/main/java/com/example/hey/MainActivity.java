@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +28,18 @@ import java.util.List;
 
 import Adapters.GroupAdapter;
 import Adapters.ListReminderAdapter;
+import Database.DatabaseReminder;
+import Database.DbContext;
 import Fragments.AddFragment;
+import Interfaces.IUpdateDatabase;
+import ItemDecoration.ItemDivider;
 import ItemDecoration.MarginGroupItem;
 import Models.Group;
 import Models.ListReminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
 
     private RecyclerView groupReminderRV;
     private GroupAdapter adapterGroup;
@@ -42,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextMain;
     private ConstraintLayout layout ;
     private Guideline g;
-
     private List <Group> groupList;
     private List<ListReminder> listReminders;
 
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         initSearchComponents();
         initFragment();
         setupBlur();
+
     }
 
     private void initLists() {
@@ -94,18 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 new Group(4,"Ngày mai",5)
         ));
 
-        listReminders = new ArrayList<>(Arrays.asList(
-                new ListReminder(1,"lmao",3),
-                new ListReminder(2,"hihi",4),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(2,"hihi",4),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(3,"bobo",5),
-                new ListReminder(2,"hihi",4),
-                new ListReminder(3,"bobo",5)
-
-        ));
+        listReminders = DbContext.getInstance(this).getListReminder();
     }
 
     private void setupBlur() {
@@ -149,7 +144,9 @@ public class MainActivity extends AppCompatActivity {
         listReminderRV = findViewById(R.id.list_reminder_recycleview);
         listReminderRV.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         ListReminderAdapter adapter = new ListReminderAdapter(listReminders);
+        ItemDivider decoration  = new ItemDivider(this, DividerItemDecoration.VERTICAL);
         listReminderRV.setAdapter(adapter);
+        listReminderRV.addItemDecoration(decoration);
     }
 
     private void initSearchComponents ()
@@ -185,11 +182,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void addListReminder (ListReminder newListReminder)
-    {
-        listReminders.add(newListReminder);
-        listReminderRV.getAdapter().notifyDataSetChanged();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("paResume","continued");
     }
 
-
+    @Override
+    public void updateInterface()
+    {
+        listReminders = DbContext.getInstance(this).getListReminder();
+        listReminderRV.setAdapter(new ListReminderAdapter(listReminders));
+        Toast.makeText(this, DbContext.getInstance(this).getReminder().size() + "", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -29,10 +29,11 @@
                     android:paddingLeft="15dp">
 
                     <EditText
+                        android:inputType="textVisiblePassword"
                         android:id="@+id/headline"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="@drawable/borderless_shape"
+                        android:background="@null"
                         android:hint="Tiêu đề" />
 
                     <View
@@ -44,6 +45,7 @@
                         android:id="@+id/note"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:inputType="textVisiblePassword"
                         android:background="@drawable/borderless_shape"
                         android:hint="Ghi chú" />
 
@@ -56,21 +58,41 @@
                 style="@style/MyCardview"
                 android:id="@+id/reminderDetail"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 app:contentPaddingLeft="15dp"
-                app:contentPaddingRight="15dp">
+                app:contentPaddingRight="15dp"
+                app:contentPaddingTop="15dp"
+                app:contentPaddingBottom="15dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="left"
-                    android:gravity="center"
-                    android:text="Chi tiết" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="left"
+                        android:gravity="center"
+                        android:text="Chi tiết" />
+
+                    <TextView
+                        android:visibility="gone"
+                        android:textColor="@color/grey"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:id="@+id/dateTime"/>
+
+                </LinearLayout>
+
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right"
+                    android:layout_gravity="right|center"
                     app:srcCompat="@drawable/next_icon" />
 
             </androidx.cardview.widget.CardView>
@@ -79,45 +101,69 @@
                 android:id="@+id/list_choose"
                 style="@style/MyCardview"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 app:contentPaddingLeft="15dp"
-                app:contentPaddingRight="15dp">
+                app:contentPaddingRight="15dp"
+                app:contentPaddingTop="15dp"
+                app:contentPaddingBottom="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:gravity="center"
                     android:text="Danh sách" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:orientation="horizontal">
+                    android:layout_gravity="right|center">
+
 
                     <ImageView
                         android:id="@+id/icon_list_choose"
+                        app:layout_constraintTop_toTopOf="@id/list_choose_name"
+                        app:layout_constraintBottom_toBottomOf="@id/list_choose_name"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:layout_gravity="center"
-                        android:layout_marginRight="5dp"
                         android:background="@drawable/circle_shape"
-                        android:backgroundTint="@color/blue" />
+                        android:backgroundTint="@color/blue"
+                        app:layout_constraintEnd_toStartOf="@+id/list_choose_name"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent" />
+
 
                     <TextView
+                        android:id="@+id/list_choose_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/list_choose_name"
+                        app:layout_constraintTop_toTopOf="@id/nextIcon"
+                        app:layout_constraintBottom_toBottomOf="@id/nextIcon"
                         android:layout_gravity="center"
-                        android:text="List name" />
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:text="List name"
+                        app:layout_constraintEnd_toStartOf="@+id/nextIcon"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_list_choose" />
+
 
                     <ImageView
+                        android:id="@+id/nextIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_gravity="right|center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/list_choose_name"
                         app:srcCompat="@drawable/next_icon" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
 
 
             </androidx.cardview.widget.CardView>

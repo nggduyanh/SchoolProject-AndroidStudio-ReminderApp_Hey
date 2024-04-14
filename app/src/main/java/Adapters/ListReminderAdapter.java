@@ -31,7 +31,6 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
     @NonNull
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_reminder_item,parent,false);
         return new ListViewHolder(v);
     }
@@ -39,6 +38,9 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         ListReminder obj = list.get(position);
+        holder.icon.setImageResource(obj.getIcon());
+        holder.icon.getBackground().setTint(obj.getColor());
+        holder.icon.setEnabled(false);
         holder.name.setText(obj.getListName());
         holder.number.setText("" + obj.getNumberReminder());
     }

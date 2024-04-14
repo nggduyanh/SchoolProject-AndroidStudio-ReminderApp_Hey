@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,21 +22,25 @@ import java.util.List;
 
 import Adapters.ListChooseAdapter;
 import Adapters.ListViewHolder;
+import Database.DbContext;
 import Interfaces.IClickListChoose;
+import ItemDecoration.ItemDivider;
 import Models.ListReminder;
 
 public class ListChooseFragment extends Fragment {
 
     private RecyclerView listRV;
     private TextView cancelBtn, addBtn, titleTv;
-
     private ReminderCreateFragment siblingFragment;
+
+    private int idListChoosed;
 
     public ListChooseFragment() {
     }
 
-    public ListChooseFragment(ReminderCreateFragment siblingFragment) {
+    public ListChooseFragment(ReminderCreateFragment siblingFragment,int id) {
         this.siblingFragment = siblingFragment;
+        this.idListChoosed = id;
     }
 
     public static ListChooseFragment newInstance() {
@@ -46,10 +51,10 @@ public class ListChooseFragment extends Fragment {
         return fragment;
     }
 
-    public static ListChooseFragment newInstance(ReminderCreateFragment siblingFragment) {
+    public static ListChooseFragment newInstance(ReminderCreateFragment siblingFragment,int ID) {
 
         Bundle args = new Bundle();
-        ListChooseFragment fragment = new ListChooseFragment(siblingFragment);
+        ListChooseFragment fragment = new ListChooseFragment(siblingFragment,ID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,34 +103,27 @@ public class ListChooseFragment extends Fragment {
     private void initRecycleView ()
     {
         LinearLayoutManager layout = new LinearLayoutManager(getContext());
-        List<ListReminder> l  = new ArrayList<>(Arrays.asList(
-            new ListReminder(1,"lmao",3),
-            new ListReminder(2,"hihi",4),
-            new ListReminder(3,"bobo",5),
-            new ListReminder(3,"bobo",5),
-            new ListReminder(2,"hihi",4),
-            new ListReminder(3,"bobo",5),
-            new ListReminder(3,"bobo",5),
-            new ListReminder(2,"hihi",4),
-            new ListReminder(3,"bobo",5)
-        ));
+        List<ListReminder> l = DbContext.getInstance(getContext()).getListReminder();
 
         listRV.setLayoutManager(layout);
         ListChooseFragment that = this;
         ListChooseAdapter adapter = new ListChooseAdapter(l, new IClickListChoose() {
             @Override
             public void clickHandle(ListViewHolder holder,int position) {
-                getParentFragmentManager().popBackStack();
+                BottomSheetFragment parent = (BottomSheetFragment) that.getParentFragment();
+                parent.getReminderInstance().setListReminder(l.get(position));
                 if (siblingFragment != null)
                 {
-                    Log.d("padz","bab");
-                    siblingFragment.setListChoosed(l.get(position));
+                    ListReminder obj = l.get(position);
+                    siblingFragment.setListChoosed(obj);
                 }
+                getParentFragmentManager().popBackStack();
                 getParentFragmentManager().beginTransaction().remove(that).commit();
             }
         });
-        adapter.setIdList(3);
+        adapter.setIdList(idListChoosed);
         listRV.setAdapter(adapter);
+        listRV.addItemDecoration(new ItemDivider(getContext(), DividerItemDecoration.VERTICAL));
     }
 
 }

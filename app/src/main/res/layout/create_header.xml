@@ -37,7 +37,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="Xong"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/color_selector_text_view"
+            android:enabled="false"/>
 
 
     </FrameLayout>

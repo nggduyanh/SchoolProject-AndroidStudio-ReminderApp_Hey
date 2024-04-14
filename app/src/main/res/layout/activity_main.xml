@@ -34,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Tìm kiếm"
+                android:inputType="textVisiblePassword"
                 android:drawableStart="@drawable/icon_search"
                 android:paddingStart="5dp"
                 android:drawablePadding="5dp"

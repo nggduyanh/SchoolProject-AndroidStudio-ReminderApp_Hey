@@ -14,9 +14,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     TextView name,number;
     ImageView icon;
-
     ConstraintLayout root;
-
     ImageView nextIcon;
 
 
