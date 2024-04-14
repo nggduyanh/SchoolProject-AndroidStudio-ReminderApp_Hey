@@ -30,7 +30,6 @@ import Models.ListReminder;
 public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     private List <ListReminder> list;
-    private Context context;
     private ICallReminderActivity iCallReminderActivity;
 
     public ListReminderAdapter(List<ListReminder> list, ICallReminderActivity iCallReminderActivity) {
@@ -42,7 +41,6 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_reminder_item,parent,false);
-        context=parent.getContext();
         return new ListViewHolder(v);
     }
 
@@ -58,7 +56,6 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
         holder.root.setOnClickListener(v->{
             iCallReminderActivity.intentCall();
         });
-
     }
 
 

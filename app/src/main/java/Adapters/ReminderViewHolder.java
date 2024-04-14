@@ -1,5 +1,8 @@
 package Adapters;
 
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -8,15 +11,17 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hey.R;
 
-public class ReminderViewHolder extends RecyclerView.ViewHolder {
+public class ReminderViewHolder extends RecyclerView.ViewHolder{
     EditText reminderName;
     RadioButton radioButton;
     ImageView imageView;
     TextView date,time;
+    ConstraintLayout root;
 
 
     public ReminderViewHolder(@NonNull View itemView){
@@ -27,4 +32,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder {
         date=itemView.findViewById(R.id.date);
         time=itemView.findViewById(R.id.time);
     }
+
+
+
 }

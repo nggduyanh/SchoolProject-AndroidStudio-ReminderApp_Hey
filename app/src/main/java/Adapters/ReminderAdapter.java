@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ import Models.Reminder;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
 
-    private Context context;
+
     private List<Reminder> list;
     private IClickReminderInfo iClickReminderInfo;
     private ICreateNotification iCreateNotification;
@@ -56,7 +57,6 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     @Override
     public ReminderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_item,parent,false);
-        context = parent.getContext();
         return new ReminderViewHolder(v);
     }
 
@@ -64,9 +64,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ReminderViewHolder holder, int position) {
         Reminder model = list.get(position);
-
         holder.reminderName.setText(model.getReminderName());
-
         holder.radioButton.setOnClickListener(v->{
             model.setStatus(!model.getStatus());
             holder.radioButton.setChecked(model.getStatus());
@@ -106,6 +104,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         });
 
     }
+
 
     @Override
     public int getItemCount() {

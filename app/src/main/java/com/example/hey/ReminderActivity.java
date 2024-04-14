@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -29,6 +30,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -73,27 +79,14 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
 
         }
     });
+
     public void addReminder(){
         reminderList.clearFocus();
 //        list.add(new Reminder(6,""));
         adapter.notifyDataSetChanged();
     }
 
-
     public void initReminderActivity(){
-
-//        containLayout = findViewById(R.id.reminder_layout);
-//        g = findViewById(R.id.guideline_reminder);
-//        containLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                containLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                int[] p = new int[2];
-//                int[] p2 = new int[2];
-//                g.getLocationInWindow(p);
-//                getSupportFragmentManager().findFragmentById(R.id.fragment_container_main).getView().getLocationOnScreen(p2);
-//            }
-//        });
 
         addReminder=findViewById(R.id.addReminder);
         g = findViewById(R.id.guideline_reminder);
@@ -121,7 +114,6 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         ReminderActivity that =this;
         adapter = new ReminderAdapter(list, this,this);
         reminderList.setAdapter(adapter);
-
 //        addReminder.setOnClickListener(v->{
 //            reminderList.clearFocus();
 //            list.add(new Reminder(++id,""));
@@ -141,7 +133,15 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
                 createNotificationChannel();
             }
         }
+        registerForContextMenu(reminderList);
 
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        new MenuInflater(this).inflate(R.menu.context_menu_option, menu);
     }
 
     @Override

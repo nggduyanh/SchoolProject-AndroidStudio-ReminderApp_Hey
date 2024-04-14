@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
+    android:id="@+id/root_reminder_item"
     >
 
 
@@ -43,10 +43,20 @@
             android:layout_height="match_parent"
             android:drawableEnd="@drawable/icon_flag"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/icon_info"
+            app:layout_constraintEnd_toEndOf="@id/icon_delete"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toEndOf="@+id/radioButton"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/icon_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/icon_info"
+            app:layout_constraintStart_toEndOf="@+id/reminder_name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/delete_icon" />
 
         <ImageView
             android:id="@+id/icon_info"
@@ -54,9 +64,11 @@
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/reminder_name"
+            app:layout_constraintStart_toEndOf="@+id/icon_delete"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/info_icon" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
