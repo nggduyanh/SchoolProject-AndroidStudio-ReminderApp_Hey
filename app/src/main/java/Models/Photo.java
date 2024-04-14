@@ -15,6 +15,11 @@ public class Photo {
         this.id = id;
     }
 
+    public Photo(Uri photoUri, Reminder reminder) {
+        this.photoUri = photoUri;
+        this.reminder = reminder;
+    }
+
     public Uri getPhotoUri() {
         return photoUri;
     }

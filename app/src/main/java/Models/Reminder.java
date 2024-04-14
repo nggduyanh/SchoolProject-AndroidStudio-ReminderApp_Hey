@@ -16,7 +16,6 @@ public class Reminder {
 
     private List<Uri> image;
     private boolean status,flag;
-
     private LocalDate date;
     private LocalTime time;
     public Reminder() {
@@ -41,11 +40,11 @@ public class Reminder {
     }
 
 
-    public Boolean getFlag() {
+    public boolean getFlag() {
         return flag;
     }
 
-    public void setFlag(Boolean flag) {
+    public void setFlag(boolean flag) {
         this.flag = flag;
     }
 
@@ -73,6 +72,18 @@ public class Reminder {
         this.status = status;
     }
 
+    public Reminder(int id, String reminderName, Boolean flag, LocalDate date, LocalTime time,boolean status) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
+        this.status = status;
+        image = new ArrayList<>();
+    }
+
+
+
     public int getId() {
         return id;
     }
@@ -89,10 +100,6 @@ public class Reminder {
         this.reminderName = reminderName;
     }
 
-
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
 
     public List<Uri> getImage() {
         return image;
@@ -123,5 +130,20 @@ public class Reminder {
     public void setNote(String note) {
         this.note = note;
     }
+
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+
 }
 
