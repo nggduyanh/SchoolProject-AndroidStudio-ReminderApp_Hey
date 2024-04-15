@@ -76,7 +76,42 @@ public class DatabaseReminder extends SQLiteOpenHelper {
                 photoTable.add(db,p);
             }
         }
+    }
 
+    public void update (Reminder r)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        reminder.update(db,r);
+    }
+
+    public void update (ListReminder lr)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        listReminder.update(db,lr);
+    }
+
+    public void update (Photo p)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        photo.update(db,p);
+    }
+
+    public void delete (Reminder r)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        reminder.delete(db,r);
+    }
+
+    public void delete (ListReminder lr)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        listReminder.delete(db,lr);
+    }
+
+    public void delete (Photo p )
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        photo.delete(db,p);
     }
 
     public Reminder getLastRowReminder ()

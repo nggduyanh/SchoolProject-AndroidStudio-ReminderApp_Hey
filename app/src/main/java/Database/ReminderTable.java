@@ -32,7 +32,7 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
     @Override
     public void createTable(SQLiteDatabase db) {
-        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach) ON DELETE CASADE) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,status,ListReminderFK);
+        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach) ON DELETE CASCADE) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,status,ListReminderFK);
         db.execSQL(sql);
     }
 

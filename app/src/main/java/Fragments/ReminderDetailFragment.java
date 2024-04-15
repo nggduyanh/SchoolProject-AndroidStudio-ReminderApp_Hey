@@ -60,6 +60,8 @@ import Adapters.PhotoAdapter;
 import Database.DbContext;
 import Interfaces.IClickPhotoAdd;
 import Models.Reminder;
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class ReminderDetailFragment extends Fragment  {
     private static final String title = "Chi tiết";
@@ -76,6 +78,8 @@ public class ReminderDetailFragment extends Fragment  {
     private PhotoAdapter adapter;
     private LocalDate date;
     private LocalTime time;
+
+    private BlurView headerBlur;
 
     private Dialog d;
 
@@ -138,6 +142,15 @@ public class ReminderDetailFragment extends Fragment  {
         super.onCreate(savedInstanceState);
     }
 
+    private void setUpBlur(View view, Dialog dialog)
+    {
+        ViewGroup root = view.findViewById(R.id.root_reminder_detail);
+        headerBlur.setupWith(root,new RenderScriptBlur(getContext()))
+                .setFrameClearDrawable(dialog.getWindow().getDecorView().getBackground())
+                .setBlurAutoUpdate(true)
+                .setBlurRadius(20f);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -146,7 +159,7 @@ public class ReminderDetailFragment extends Fragment  {
         setTitle();
         initEvent();
         initRecycleView ();
-
+        setUpBlur(v,d);
         BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
         if (parent.getReminderInstance().getDate() != null)
         {
@@ -421,6 +434,7 @@ public class ReminderDetailFragment extends Fragment  {
     {
         cancelBtn = view.findViewById(R.id.cancel_bottom_sheet);
         addBtn = view.findViewById(R.id.add_bottom_sheet);
+        headerBlur = view.findViewById(R.id.headerBlur);
         BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
         if (parent.getReminderInstance().getReminderName() == null || parent.getReminderInstance().getReminderName().length() == 0)
         {

@@ -12,9 +12,13 @@
     <color name="orange">#FF9800</color>
     <color name="yellow">#FFEB3B</color>
     <color name="green">#8BC34A</color>
-    <color name="aqua">#8003A9F4</color>
+    <color name="greeneer">#22AC28</color>
+    <color name="aqua">#801689BD</color>
     <color name="crimson">#FF0099</color>
     <color name="cyan">#AD000DFF</color>
-    <color name="peach">#FFE5E4</color>
+    <color name="peach">#C9A3A1</color>
     <color name="MillenialPink">#F3CFC6</color>
+    <color name="darkYellow2">#827717</color>
+    <color name="darkGrey2">#5E5C4F</color>
+    <color name="tan">#6759E8</color>
 </resources>

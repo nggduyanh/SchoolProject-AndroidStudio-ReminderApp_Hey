@@ -20,7 +20,6 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
     public PhotoViewHolder(@NonNull View itemView) {
         super(itemView);
         deleteBtn = itemView.findViewById(R.id.deleteImage);
-        shuffleBtn = itemView.findViewById(R.id.shuffleBtn);
         imageChoose = itemView.findViewById(R.id.imageChoose);
     }
 }

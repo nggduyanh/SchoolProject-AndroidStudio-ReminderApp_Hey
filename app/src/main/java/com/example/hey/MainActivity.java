@@ -1,5 +1,6 @@
 package com.example.hey;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
@@ -14,6 +15,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -31,6 +35,7 @@ import Adapters.ListReminderAdapter;
 import Database.DatabaseReminder;
 import Database.DbContext;
 import Fragments.AddFragment;
+import Fragments.BottomSheetFragment;
 import Interfaces.IUpdateDatabase;
 import ItemDecoration.ItemDivider;
 import ItemDecoration.MarginGroupItem;
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
     }
     private void initMainActivityComponents() {
         initLists();
-        initGroupReminderComponents();
+//        initGroupReminderComponents();
         initListReminderComponents();
         initSearchComponents();
         initFragment();
@@ -147,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
         ItemDivider decoration  = new ItemDivider(this, DividerItemDecoration.VERTICAL);
         listReminderRV.setAdapter(adapter);
         listReminderRV.addItemDecoration(decoration);
+        registerForContextMenu(listReminderRV);
     }
 
     private void initSearchComponents ()
@@ -193,6 +199,24 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase {
     {
         listReminders = DbContext.getInstance(this).getListReminder();
         listReminderRV.setAdapter(new ListReminderAdapter(listReminders));
-        Toast.makeText(this, DbContext.getInstance(this).getLastRowReminder().getReminderName() + "", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        ListReminderAdapter a = (ListReminderAdapter)listReminderRV.getAdapter();
+        int pos = a.getLongClickPosition();
+        ListReminder obj = listReminders.get(pos);
+        if (item.getItemId() == R.id.update)
+        {
+            BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.LIST_UPDATE,obj);
+            groupFragment.show(getSupportFragmentManager(), groupFragment.getTag());
+        }
+        else if (item.getItemId() == R.id.delete)
+        {
+            DbContext.getInstance(this).delete(obj);
+            listReminders.remove(pos);
+            listReminderRV.getAdapter().notifyDataSetChanged();
+        }
+        return super.onContextItemSelected(item);
     }
 }

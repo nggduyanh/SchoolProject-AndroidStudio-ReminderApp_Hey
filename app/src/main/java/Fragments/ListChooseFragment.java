@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,21 +27,25 @@ import Database.DbContext;
 import Interfaces.IClickListChoose;
 import ItemDecoration.ItemDivider;
 import Models.ListReminder;
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class ListChooseFragment extends Fragment {
 
     private RecyclerView listRV;
     private TextView cancelBtn, addBtn, titleTv;
     private ReminderCreateFragment siblingFragment;
-
     private int idListChoosed;
+    private Dialog d;
+    private BlurView headerBlur;
 
     public ListChooseFragment() {
     }
 
-    public ListChooseFragment(ReminderCreateFragment siblingFragment,int id) {
+    public ListChooseFragment(ReminderCreateFragment siblingFragment,int id,Dialog d) {
         this.siblingFragment = siblingFragment;
         this.idListChoosed = id;
+        this.d = d;
     }
 
     public static ListChooseFragment newInstance() {
@@ -51,10 +56,10 @@ public class ListChooseFragment extends Fragment {
         return fragment;
     }
 
-    public static ListChooseFragment newInstance(ReminderCreateFragment siblingFragment,int ID) {
+    public static ListChooseFragment newInstance(ReminderCreateFragment siblingFragment,int ID,Dialog d) {
 
         Bundle args = new Bundle();
-        ListChooseFragment fragment = new ListChooseFragment(siblingFragment,ID);
+        ListChooseFragment fragment = new ListChooseFragment(siblingFragment,ID,d);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,7 +77,17 @@ public class ListChooseFragment extends Fragment {
         setTitle();
         initRecycleView();
         initClickEvent();
+        setUpBlur(v,d);
         return v;
+    }
+
+    private void setUpBlur(View view, Dialog dialog)
+    {
+        ViewGroup root = view.findViewById(R.id.root_list_choose);
+        headerBlur.setupWith(root,new RenderScriptBlur(getContext()))
+                .setFrameClearDrawable(dialog.getWindow().getDecorView().getBackground())
+                .setBlurAutoUpdate(true)
+                .setBlurRadius(20f);
     }
 
     private void initClickEvent() {
@@ -90,6 +105,7 @@ public class ListChooseFragment extends Fragment {
         cancelBtn = v.findViewById(R.id.cancel_bottom_sheet);
         addBtn = v.findViewById(R.id.add_bottom_sheet);
         titleTv = v.findViewById(R.id.header_bottom_sheet);
+        headerBlur = v.findViewById(R.id.headerBlur);
     }
 
     private void setTitle()

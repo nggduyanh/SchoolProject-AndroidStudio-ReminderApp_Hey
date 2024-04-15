@@ -10,6 +10,7 @@
 
     <item android:state_enabled="false">
         <shape android:shape="oval">
+            <padding android:top="10dp" android:right="10dp" android:left="10dp" android:bottom="10dp"/>
         </shape>
     </item>
 

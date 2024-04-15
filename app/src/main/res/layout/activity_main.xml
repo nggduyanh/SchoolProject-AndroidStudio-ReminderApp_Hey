@@ -31,6 +31,9 @@
             android:layout_marginLeft="15dp">
 
             <EditText
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:hint="Tìm kiếm"
@@ -68,7 +71,8 @@
                 app:layout_constraintTop_toBottomOf="@id/group_reminder_recyleview"
                 app:layout_constraintLeft_toLeftOf="@id/group_reminder_recyleview"
                 android:text="Danh sách của tôi"
-                android:layout_marginTop="30dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
                 android:id="@+id/listHeader"/>
 
             <androidx.cardview.widget.CardView

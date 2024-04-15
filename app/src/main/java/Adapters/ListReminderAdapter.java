@@ -22,6 +22,7 @@ import Models.ListReminder;
 
 public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
+    private int longClickPosition;
     private List <ListReminder> list;
 
     public ListReminderAdapter(List<ListReminder> list) {
@@ -43,6 +44,13 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
         holder.icon.setEnabled(false);
         holder.name.setText(obj.getListName());
         holder.number.setText("" + obj.getNumberReminder());
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickPosition = holder.getAdapterPosition();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -50,4 +58,11 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
         return list.size();
     }
 
+    public int getLongClickPosition() {
+        return longClickPosition;
+    }
+
+    public void setLongClickPosition(int longClickPosition) {
+        this.longClickPosition = longClickPosition;
+    }
 }
