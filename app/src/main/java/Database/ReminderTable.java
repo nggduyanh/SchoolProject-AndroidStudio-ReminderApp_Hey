@@ -32,7 +32,7 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
     @Override
     public void createTable(SQLiteDatabase db) {
-        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach) ON DELETE CASADE) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,status,ListReminderFK);
+        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s Text,%s Text, %s Text, %s Text, %s Integer, %s Integer, %s Integer, FOREIGN KEY (%s) REFERENCES DanhSach (IdDanhSach) ON DELETE CASCADE) ",tableName,ID,name,note,date,hour,flag,ListReminderFK,status,ListReminderFK);
         db.execSQL(sql);
     }
 
@@ -71,12 +71,12 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
     @Override
     public void delete(SQLiteDatabase db, Reminder obj) {
-        if (obj.getImage().size() == 0)
-        {
+//        if (obj.getImage().size() == 0)
+//        {
             String sql = "Delete from " + tableName + " Where " + ID + " = " + obj.getId();
             db.execSQL(sql);
             db.close();
-        }
+//        }
     }
 
     @Override
@@ -136,7 +136,8 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                             cursor.getInt(4) == 1,
                             cursor.getString(3) == null ? null : LocalDate.parse(cursor.getString(3)),
                             cursor.getString(4) == null ? null: LocalTime.parse(cursor.getString(4)),
-                            cursor.getInt(7) == 1);
+                            cursor.getInt(7) == 1,
+                            cursor.getInt(6));
                 }
                 list.add(reminder);
             }

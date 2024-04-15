@@ -47,6 +47,7 @@ import ItemDecoration.ItemDivider;
 import ItemDecoration.MarginGroupItem;
 import Models.Group;
 import Models.ListReminder;
+import Models.Reminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     private ConstraintLayout layout ;
     private Guideline g;
 
+    private int index;
     private List <Group> groupList;
     private List<ListReminder> listReminders;
 
@@ -208,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
         listReminders = DbContext.getInstance(this).getListReminder();
 
         listReminderRV.setAdapter(new ListReminderAdapter(listReminders,this));
-        Toast.makeText(this, DbContext.getInstance(this).getLastRowReminder().getReminderName() + "", Toast.LENGTH_SHORT).show();
     }
 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -219,10 +220,25 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     });
 
     @Override
+    public void getListPosition(int position) {
+        index=position;
+        Log.d("vitri", ""+index);
+    }
+    @Override
     public void intentCall() {
         Intent intent = new Intent(this,ReminderActivity.class);
+        ListReminder listReminder = listReminders.get(index);
+        Bundle b = new Bundle();
+        b.putInt("Id",listReminder.getId());
+        b.putString("Title",listReminder.getListName());
+        b.putInt("Color",listReminder.getColor());
+        int id =listReminder.getId();
+        DbContext.getInstance(this).getReminderByID(id);
+        intent.putExtras(b);
         launcher.launch(intent);
     }
+
+
 
 
 }

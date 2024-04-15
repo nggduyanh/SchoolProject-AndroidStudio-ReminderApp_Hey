@@ -13,6 +13,10 @@ public class ListReminder {
     public ListReminder() {
     }
 
+    public ListReminder(int id) {
+        this.id = id;
+    }
+
     public ListReminder(int id, String listName, int numberReminder) {
         this.id = id;
         this.listName = listName;

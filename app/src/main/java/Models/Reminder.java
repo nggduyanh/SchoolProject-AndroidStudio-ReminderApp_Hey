@@ -38,6 +38,15 @@ public class Reminder {
         this.time = time;
         this.status= status;
     }
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status,int FK_id) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
+        this.status= status;
+        listReminder = new ListReminder(FK_id);
+    }
 
 
     public boolean getFlag() {
@@ -71,17 +80,6 @@ public class Reminder {
     public void setStatus(Boolean status) {
         this.status = status;
     }
-
-    public Reminder(int id, String reminderName, Boolean flag, LocalDate date, LocalTime time,boolean status) {
-        this.id = id;
-        this.reminderName = reminderName;
-        this.flag = flag;
-        this.date = date;
-        this.time = time;
-        this.status = status;
-        image = new ArrayList<>();
-    }
-
 
 
     public int getId() {

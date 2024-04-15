@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hey.R;
 
-public class ListViewHolder extends RecyclerView.ViewHolder {
+import Interfaces.ICallReminderActivity;
+
+public class ListViewHolder extends RecyclerView.ViewHolder{
 
     TextView name,number;
     ImageView icon;

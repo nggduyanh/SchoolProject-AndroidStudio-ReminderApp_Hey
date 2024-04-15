@@ -54,7 +54,9 @@ public class ListReminderAdapter extends RecyclerView.Adapter<ListViewHolder> {
         holder.name.setText(obj.getListName());
         holder.number.setText("" + obj.getNumberReminder());
         holder.root.setOnClickListener(v->{
+            iCallReminderActivity.getListPosition(position);
             iCallReminderActivity.intentCall();
+
         });
     }
 

@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.icu.text.CaseMap;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
 
+import Database.DbContext;
 import Fragments.AddFragment;
 import Fragments.BottomSheetFragment;
 import Interfaces.IClickReminderInfo;
@@ -64,34 +66,41 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ReminderViewHolder holder, int position) {
         Reminder model = list.get(position);
+
+        if(model.getFlag()==true){
+            holder.reminderName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.icon_flag,0);
+        }
+        else  holder.reminderName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+
+
+        holder.radioButton.setChecked(model.getStatus());
+
         holder.reminderName.setText(model.getReminderName());
+
         holder.radioButton.setOnClickListener(v->{
             model.setStatus(!model.getStatus());
             holder.radioButton.setChecked(model.getStatus());
+            DbContext.getInstance(v.getContext()).update(model);
         });
 
         holder.reminderName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus){
-
-                    model.setReminderName(holder.reminderName.getText().toString());
-
+                    DbContext.getInstance(v.getContext()).update(model);
                     if(model.getTime()!=null){
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             iCreateNotification.scheduleNotification(model);
                             Log.d("noti","success");
                         }
                     }
-                    Log.d("phahoia","he");
+
                 }
             }
         });
 
-        holder.imageView.setOnClickListener(v->{
+        holder.imageOption.setOnClickListener(v->{
             iClickReminderInfo.clickReminderInfo();
-            Log.d("adapter", "onBindViewHolder: ");
-            holder.reminderName.setCompoundDrawables(null,null,null,null);
             if(model.getDate()==null){
                 holder.date.setVisibility(View.GONE);
             }
@@ -101,6 +110,11 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
                 holder.time.setVisibility(View.GONE);
             }
             else holder.time.setVisibility(View.VISIBLE);
+        });
+
+        holder.imageDelete.setOnClickListener(v->{
+            Log.d("id", ""+model.getId());
+            DbContext.getInstance(v.getContext()).delete(model);
         });
 
     }

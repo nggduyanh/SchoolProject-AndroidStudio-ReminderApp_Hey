@@ -10,4 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 public interface ICallReminderActivity {
 
     void intentCall();
+
+    void getListPosition(int position);
 }

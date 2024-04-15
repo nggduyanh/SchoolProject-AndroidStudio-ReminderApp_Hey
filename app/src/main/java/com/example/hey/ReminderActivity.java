@@ -45,6 +45,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import Adapters.ReminderAdapter;
+import Database.DbContext;
 import Fragments.AddFragment;
 import Fragments.BottomSheetFragment;
 import Interfaces.IClickReminderInfo;
@@ -73,13 +74,6 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         initReminderActivity();
     }
 
-    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-
-        }
-    });
-
     public void addReminder(){
         reminderList.clearFocus();
 //        list.add(new Reminder(6,""));
@@ -87,6 +81,10 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     }
 
     public void initReminderActivity(){
+
+        Intent intent = getIntent();
+        Bundle b = intent.getExtras();
+        list=DbContext.getInstance(this).getReminderByID(b.getInt("Id"));
 
         addReminder=findViewById(R.id.addReminder);
         g = findViewById(R.id.guideline_reminder);
@@ -107,13 +105,15 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
 //                new Reminder(3,"Đi học")
 //        ));
 //        int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status
-        list = new ArrayList<>();
+//        list = new ArrayList<>();
 
         reminderList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
         ReminderActivity that =this;
         adapter = new ReminderAdapter(list, this,this);
         reminderList.setAdapter(adapter);
+
+
 //        addReminder.setOnClickListener(v->{
 //            reminderList.clearFocus();
 //            list.add(new Reminder(++id,""));
@@ -135,7 +135,24 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         }
         registerForContextMenu(reminderList);
 
+
+        reminderTitle.setText(b.getString("Title"));
+        reminderTitle.setTextColor(b.getInt("Color"));
+
+        goBack.setOnClickListener(v->{
+            Intent resultintent = new Intent(this,MainActivity.class);
+            setResult(RESULT_OK,resultintent);
+            finish();
+        });
+
     }
+
+    private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+
+        }
+    });
 
 
     @Override
