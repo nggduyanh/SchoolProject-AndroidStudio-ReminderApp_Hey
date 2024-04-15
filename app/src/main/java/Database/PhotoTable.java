@@ -42,14 +42,12 @@ public class PhotoTable implements IDatabaseTable<Photo> {
         values.put(UriPhoto,obj.getPhotoUri().toString());
         values.put(ReminderFK,obj.getReminder().getId());
         db.insert(tableName,null,values);
-        db.close();
     }
 
     @Override
     public void delete(SQLiteDatabase db, Photo obj) {
         String sql = "Delete from " + tableName + " Where " + UriPhoto + " = " + obj.getPhotoUri() + " AND " + ReminderFK + " = " + obj.getReminder().getId();
         db.execSQL(sql);
-        db.close();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class PhotoTable implements IDatabaseTable<Photo> {
         ContentValues values = new ContentValues();
         values.put(UriPhoto,obj.getId());
         db.update(tableName,values,ID + "=?", new String[] {String.valueOf(obj.getId())});
-        db.close();
+
     }
 
     @Override

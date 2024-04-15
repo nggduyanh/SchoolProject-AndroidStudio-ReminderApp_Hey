@@ -53,19 +53,25 @@ public class DatabaseReminder extends SQLiteOpenHelper {
     public List<ListReminder> getListReminder ()
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return listReminder.read(db);
+        List<ListReminder> l =  listReminder.read(db);
+        db.close();
+        return l;
     }
 
     public List<Reminder> getReminder ()
     {
         SQLiteDatabase db = getReadableDatabase();
-        return reminder.read(db);
+        List<Reminder> l = reminder.read(db);
+        db.close();
+        return l ;
     }
 
     public void add (ListReminder lr)
     {
         SQLiteDatabase db = getWritableDatabase();
         listReminder.add(db,lr);
+        db.close();
+
     }
 
     public void add (Reminder r)
@@ -82,6 +88,7 @@ public class DatabaseReminder extends SQLiteOpenHelper {
                 photoTable.add(db,p);
             }
         }
+        db.close();
     }
 
 
@@ -101,40 +108,47 @@ public class DatabaseReminder extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = getWritableDatabase();
         reminder.update(db,r);
+        db.close();
+
     }
 
     public void update (ListReminder lr)
     {
         SQLiteDatabase db = getWritableDatabase();
         listReminder.update(db,lr);
+        db.close();
+
     }
 
     public void update (Photo p)
     {
         SQLiteDatabase db = getWritableDatabase();
         photo.update(db,p);
+        db.close();
+
     }
 
     public void delete (Reminder r)
     {
         SQLiteDatabase db = getWritableDatabase();
         reminder.delete(db,r);
+        db.close();
     }
 
     public void delete (ListReminder lr)
     {
         SQLiteDatabase db = getWritableDatabase();
         listReminder.delete(db,lr);
+        db.close();
+
     }
 
     public void delete (Photo p )
     {
         SQLiteDatabase db = getWritableDatabase();
         photo.delete(db,p);
+        db.close();
     }
-
-
-
 
 
 }
