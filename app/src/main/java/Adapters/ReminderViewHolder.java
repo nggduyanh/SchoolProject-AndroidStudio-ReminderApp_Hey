@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hey.R;
 
 public class ReminderViewHolder extends RecyclerView.ViewHolder{
-    EditText reminderName;
+    public EditText reminderName;
     RadioButton radioButton;
     ImageView imageOption,imageDelete;
     TextView date,time;
-
+    RecyclerView imageContain;
 
     public ReminderViewHolder(@NonNull View itemView){
         super(itemView);
@@ -31,6 +31,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder{
         imageDelete=itemView.findViewById(R.id.icon_delete);
         date=itemView.findViewById(R.id.date);
         time=itemView.findViewById(R.id.time);
+        imageContain=itemView.findViewById(R.id.reminderImageContainer);
     }
 
 

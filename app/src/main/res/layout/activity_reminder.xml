@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="15dp"
+
             android:paddingRight="15dp">
 
 
@@ -41,14 +42,14 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <ImageView
-                    android:id="@+id/option"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    app:layout_constraintLeft_toRightOf="@id/arrow_back"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/more_icon" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/option"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    app:layout_constraintLeft_toRightOf="@id/arrow_back"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:srcCompat="@drawable/more_icon" />-->
 
                 <TextView
                     android:id="@+id/arrow_back"
@@ -56,13 +57,23 @@
                     android:layout_height="match_parent"
                     android:drawableStart="@drawable/arrow_back_icon"
                     android:gravity="center_vertical"
-                    android:text="Lists"
+                    android:text="Danh sách"
                     android:textColor="@color/blue"
                     android:textSize="20sp"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/option"
+
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/doneBtn"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:textColor="@color/blue"
+                    android:layout_height="match_parent"
+                    android:text="Xong"
+                    app:layout_constraintRight_toRightOf="parent"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -86,7 +97,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/reminder_title" />
+                app:layout_constraintTop_toBottomOf="@id/reminder_title"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

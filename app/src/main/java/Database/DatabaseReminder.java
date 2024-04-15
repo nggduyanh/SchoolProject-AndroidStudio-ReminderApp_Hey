@@ -44,7 +44,7 @@ public class DatabaseReminder extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public List<Reminder> getReminderByID(int id){
+    public List<Reminder> getReminderByListID(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         return reminder.readByListReminderID(db,id);
     }

@@ -1,45 +1,25 @@
 package Adapters;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.icu.text.CaseMap;
+import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hey.R;
-import com.example.hey.ReminderActivity;
 
-import java.io.Console;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.List;
 
 import Database.DbContext;
-import Fragments.AddFragment;
-import Fragments.BottomSheetFragment;
 import Interfaces.IClickReminderInfo;
 import Interfaces.ICreateNotification;
+import Interfaces.IUpdateDatabase;
 import Models.Reminder;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
@@ -47,12 +27,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
 
     private List<Reminder> list;
     private IClickReminderInfo iClickReminderInfo;
-    private ICreateNotification iCreateNotification;
+    private IUpdateDatabase iUpdateDatabase;
 
-    public ReminderAdapter(List<Reminder> list,IClickReminderInfo iClickReminderInfo,ICreateNotification iCreateNotification){
+
+    public ReminderAdapter(List<Reminder> list, IClickReminderInfo iClickReminderInfo, ICreateNotification iCreateNotification, IUpdateDatabase iUpdateDatabase){
         this.list=list;
         this.iClickReminderInfo=iClickReminderInfo;
-        this.iCreateNotification=iCreateNotification;
+        this.iUpdateDatabase=iUpdateDatabase;
     }
 
     @NonNull
@@ -66,7 +47,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ReminderViewHolder holder, int position) {
         Reminder model = list.get(position);
-
+        Log.d("flag:", ""+ model.getFlag());
         if(model.getFlag()==true){
             holder.reminderName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.icon_flag,0);
         }
@@ -80,8 +61,15 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         if(model.getTime()==null){
             holder.time.setVisibility(View.GONE);
         }
-        else holder.date.setText(model.getTime().toString());
+        else holder.time.setText(model.getTime().toString());
 
+        if(model.getImage()!=null){
+            Log.d("paDebug",model.getImage().size() + "");
+            PhotoReminderAdapter adapter = new PhotoReminderAdapter(model.getImage());
+            LinearLayoutManager layout = new LinearLayoutManager(holder.itemView.getContext(),LinearLayoutManager.HORIZONTAL,false);
+            holder.imageContain.setLayoutManager(layout);
+            holder.imageContain.setAdapter(adapter);
+        }
         holder.radioButton.setChecked(model.getStatus());
 
         holder.reminderName.setText(model.getReminderName());
@@ -92,26 +80,21 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
             DbContext.getInstance(v.getContext()).update(model);
         });
 
-
-
         holder.reminderName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
+                if(!hasFocus &&  model.getListReminder() != null){
+                    model.setReminderName(holder.reminderName.getText().toString());
                     DbContext.getInstance(v.getContext()).update(model);
-                    if(model.getTime()!=null){
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            iCreateNotification.scheduleNotification(model);
-                            Log.d("noti","success");
-                        }
-                    }
-
+                    Log.d("check up", ""+model.getReminderName());
                 }
             }
         });
 
         holder.imageOption.setOnClickListener(v->{
-            iClickReminderInfo.clickReminderInfo();
+            iClickReminderInfo.clickReminderInfo(position);
+            Log.d("checckck","sass");
+            Log.d("ten", model.getReminderName());
             if(model.getDate()==null){
                 holder.date.setVisibility(View.GONE);
             }
@@ -124,8 +107,8 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         });
 
         holder.imageDelete.setOnClickListener(v->{
-            Log.d("id", ""+model.getId());
             DbContext.getInstance(v.getContext()).delete(model);
+            iUpdateDatabase.updateInterface();
         });
 
     }

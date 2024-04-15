@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -32,33 +31,33 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import Adapters.ReminderAdapter;
+import Adapters.ReminderViewHolder;
 import Database.DbContext;
 import Fragments.AddFragment;
 import Fragments.BottomSheetFragment;
 import Interfaces.IClickReminderInfo;
 import Interfaces.ICreateNotification;
+import Interfaces.IUpdateDatabase;
+import Models.ListReminder;
 import Models.Reminder;
 
-public class ReminderActivity extends AppCompatActivity implements IClickReminderInfo, ICreateNotification {
+public class ReminderActivity extends AppCompatActivity implements IClickReminderInfo, ICreateNotification, IUpdateDatabase {
 
+    private int listID;
     private TextView reminderTitle,goBack;
     private ImageView imageOption;
     private TextView addReminder;
     private RecyclerView reminderList;
-    private int id=4;
     private FragmentContainerView fragmentContainerView;
 
     private ConstraintLayout containLayout,optionLayout;
@@ -66,6 +65,9 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
 
     private List<Reminder> list;
     private ReminderAdapter adapter;
+    private int index = -1;
+
+    private TextView doneBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,42 +77,62 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     }
 
     public void addReminder(){
-        reminderList.clearFocus();
-//        list.add(new Reminder(6,""));
+        doneBtn.setVisibility(View.VISIBLE);
+        list.add(new Reminder());
+        index = list.size() - 1;
         adapter.notifyDataSetChanged();
     }
 
     public void initReminderActivity(){
 
+
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
-        list=DbContext.getInstance(this).getReminderByID(b.getInt("Id"));
+        listID=b.getInt("Id");
+        list=DbContext.getInstance(this).getReminderByListID(listID);
 
+        doneBtn = findViewById(R.id.doneBtn);
+        doneBtn.setVisibility(View.GONE);
+        doneBtn.setOnClickListener(v -> {
+            if (index != -1)
+            {
+               EditText txt = ((ReminderViewHolder)reminderList.findViewHolderForAdapterPosition(index)).reminderName;
+               if (txt.getText().length() == 0)
+               {
+                   list.remove(index);
+                   adapter.notifyDataSetChanged();
+                   reminderList.clearFocus();
+               }
+               else
+               {
+                   list.get(index).setReminderName(txt.getText().toString());
+                   list.get(index).setListReminder(new ListReminder(listID));
+                   DbContext.getInstance(this).add(list.get(index));
+                   list.get(index).setId(DbContext.getInstance(this).getLastRowReminder().getId());
+               }
+                index = -1;
+               doneBtn.setVisibility(View.GONE);
+            }
+        });
         addReminder=findViewById(R.id.addReminder);
         g = findViewById(R.id.guideline_reminder);
         optionLayout = findViewById(R.id.option_view);
 
         goBack=findViewById(R.id.arrow_back);
 
-        imageOption=findViewById(R.id.option);
+//        imageOption=findViewById(R.id.option);
 
 
         reminderTitle = findViewById(R.id.reminder_title);
 
         reminderList = findViewById(R.id.reminder_list) ;
 
-//        list= new ArrayList<>(Arrays.asList(
-//                new Reminder(1,"Thức dậy"),
-//                new Reminder(2,"Đánh răng"),
-//                new Reminder(3,"Đi học")
-//        ));
-//        int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status
-//        list = new ArrayList<>();
+
 
         reminderList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
         ReminderActivity that =this;
-        adapter = new ReminderAdapter(list, this,this);
+        adapter = new ReminderAdapter(list, this,this,this);
         reminderList.setAdapter(adapter);
 
 
@@ -145,6 +167,22 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
             finish();
         });
 
+        ConstraintLayout root = findViewById(R.id.reminder_layout);
+        root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if (index != -1)
+                {
+                    list.remove(index);
+                    adapter.notifyDataSetChanged();
+                    index = -1;
+                    reminderList.clearFocus();
+                    doneBtn.setVisibility(View.GONE);
+                }
+            }
+        });
+
     }
 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -162,8 +200,9 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     }
 
     @Override
-    public void clickReminderInfo() {
-        BottomSheetFragment detailFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_ADD);
+    public void clickReminderInfo(int position) {
+        Reminder reminder= list.get(position);
+        BottomSheetFragment detailFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_UPDATE,reminder);
         detailFragment.show(getSupportFragmentManager(), detailFragment.getTag());
     }
 
@@ -201,7 +240,7 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         int minute = reminder.getTime().getMinute();
         int hour = reminder.getTime().getHour();
         int day = reminder.getDate().getDayOfMonth();
-        int month = reminder.getDate().getMonthValue();
+        int month = reminder.getDate().getMonthValue()-1;
         int year = reminder.getDate().getYear();
 
         // Create a Calendar instance and set the selected date and time
@@ -272,5 +311,11 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
 
         // Permissions are granted
         return true;
+    }
+
+    @Override
+    public void updateInterface() {
+        list = DbContext.getInstance(this).getReminderByListID(listID);
+        reminderList.setAdapter(new ReminderAdapter(list,this,this,this));
     }
 }

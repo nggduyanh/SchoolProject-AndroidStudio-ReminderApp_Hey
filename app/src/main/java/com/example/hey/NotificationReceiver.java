@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -44,7 +45,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Show the notification using the manager
-        manager.notify(intent.getIntExtra(notificationID,0), notification);
+        manager.notify(b.getInt(notificationID), notification);
+
+        Log.d("receiver","id:"+b.getInt(notificationID));
     }
 
 

@@ -29,6 +29,7 @@ public class Reminder {
         this.date = date;
         this.time = time;
         this.status= false;
+        image = new ArrayList<>();
     }
     public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status) {
         this.id = id;
@@ -37,6 +38,7 @@ public class Reminder {
         this.date = date;
         this.time = time;
         this.status= status;
+        image = new ArrayList<>();
     }
     public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status,int FK_id) {
         this.id = id;
@@ -46,6 +48,7 @@ public class Reminder {
         this.time = time;
         this.status= status;
         listReminder = new ListReminder(FK_id);
+        image = new ArrayList<>();
     }
 
 

@@ -64,7 +64,7 @@
                             android:layout_marginRight="8dp"
                             android:visibility="invisible"
                             app:layout_constraintRight_toRightOf="@id/list_name"
-                            app:srcCompat="@drawable/delete_icon" />
+                            app:srcCompat="@drawable/delete_icon2" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,11 @@
 package com.example.hey;
 
 
+import static com.example.hey.NotificationReceiver.channelID;
+import static com.example.hey.NotificationReceiver.messageExtra;
+import static com.example.hey.NotificationReceiver.notificationID;
+import static com.example.hey.NotificationReceiver.titleExtra;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -8,18 +13,29 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,6 +53,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import Adapters.GroupAdapter;
@@ -53,6 +70,7 @@ import Interfaces.ICallReminderActivity;
 
 import Fragments.BottomSheetFragment;
 
+import Interfaces.ICreateNotification;
 import Interfaces.IUpdateDatabase;
 import ItemDecoration.ItemDivider;
 import ItemDecoration.MarginGroupItem;
@@ -62,7 +80,7 @@ import Models.Reminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class MainActivity extends AppCompatActivity implements IUpdateDatabase, ICallReminderActivity {
+public class MainActivity extends AppCompatActivity implements IUpdateDatabase, ICallReminderActivity, ICreateNotification {
 
     private RecyclerView groupReminderRV;
     private GroupAdapter adapterGroup;
@@ -82,6 +100,14 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
         setContentView(R.layout.activity_main);
         initMainActivityComponents();
         setMainLayoutPadding();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            checkNotificationPermissions(this);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel();
+        }
 
     }
 
@@ -247,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
-
+            updateInterface();
         }
     });
 
@@ -265,12 +291,121 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
         b.putString("Title",listReminder.getListName());
         b.putInt("Color",listReminder.getColor());
         int id =listReminder.getId();
-        DbContext.getInstance(this).getReminderByID(id);
+        DbContext.getInstance(this).getReminderByListID(id);
         intent.putExtras(b);
         launcher.launch(intent);
     }
 
 
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("ScheduleExactAlarm")
+    public void scheduleNotification(Reminder reminder) {
+        // Create an intent for the Notification BroadcastReceiver
+        Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+
+        // Extract title and message from user input
 
 
+        // Add title and message as extras to the intent
+        Bundle b = new Bundle();
+
+        b.putString(titleExtra, reminder.getReminderName());
+        b.putString(messageExtra, reminder.getReminderName());
+        b.putInt(notificationID,reminder.getId());
+        intent.putExtras(b);
+        // Create a PendingIntent for the broadcast
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getApplicationContext(),
+                reminder.getId(),
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        // Get the AlarmManager service
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        // Get the selected time and schedule the notification
+
+        int hour = reminder.getTime().getHour();
+        int minute = reminder.getTime().getMinute();
+        int day = reminder.getDate().getDayOfMonth();
+        int month = reminder.getDate().getMonthValue()-1;
+        int year = reminder.getDate().getYear();
+
+        // Create a Calendar instance and set the selected date and time
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day, hour, minute);
+
+        Log.d("duyanh", String.valueOf(hour));
+        Log.d("duyanh", String.valueOf(minute));
+        Log.d("duyanh", String.valueOf(day));
+        Log.d("duyanh", String.valueOf(month));
+        Log.d("duyanh", String.valueOf(year));
+
+        long time = calendar.getTimeInMillis();
+
+        alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+        );
+
+        Log.d("notimain","sucess");
+        // Show an alert dialog with information
+        // about the scheduled notification
+    }
+
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createNotificationChannel() {
+        // Create a notification channel for devices running
+        // Android Oreo (API level 26) and above
+        String name = "Main Chanel";
+        String desc = "All of the Reminders";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(channelID, name, importance);
+        channel.setDescription(desc);
+
+        // Get the NotificationManager service and create the channel
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public boolean checkNotificationPermissions(Context context) {
+        // Check if notification permissions are granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+            boolean isEnabled = notificationManager.areNotificationsEnabled();
+
+            if (!isEnabled) {
+                // Open the app notification settings if notifications are not enabled
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+                context.startActivity(intent);
+
+                return false;
+            }
+        } else {
+            boolean areEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
+
+            if (!areEnabled) {
+                // Open the app notification settings if notifications are not enabled
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+                context.startActivity(intent);
+
+                return false;
+            }
+        }
+
+        // Permissions are granted
+        return true;
+    }
 }

@@ -1,5 +1,5 @@
 package Interfaces;
 
 public interface IClickReminderInfo {
-    public void clickReminderInfo();
+    public void clickReminderInfo(int position);
 }
