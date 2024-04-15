@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Util.CornerView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<eightbitlab.com.blurview.BlurView
+   android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/headerBlur"
+    >
+
+    <FrameLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/cancel_bottom_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:text="Hủy"
+            android:textColor="@color/blue"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/header_bottom_sheet"
+            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/add_bottom_sheet"
+            android:layout_width="wrap_content"
+            android:layout_gravity="right"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="Xong"
+            android:textColor="@color/color_selector_text_view"
+            android:enabled="false"/>
+
+
+    </FrameLayout>
+
+</eightbitlab.com.blurview.BlurView>
+</Util.CornerView>
