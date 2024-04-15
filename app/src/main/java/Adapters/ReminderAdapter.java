@@ -72,6 +72,15 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         }
         else  holder.reminderName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
 
+        if(model.getDate()==null){
+            holder.date.setVisibility(View.GONE);
+        }
+        else holder.date.setText(model.getDate().toString());
+
+        if(model.getTime()==null){
+            holder.time.setVisibility(View.GONE);
+        }
+        else holder.date.setText(model.getTime().toString());
 
         holder.radioButton.setChecked(model.getStatus());
 
@@ -82,6 +91,8 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
             holder.radioButton.setChecked(model.getStatus());
             DbContext.getInstance(v.getContext()).update(model);
         });
+
+
 
         holder.reminderName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

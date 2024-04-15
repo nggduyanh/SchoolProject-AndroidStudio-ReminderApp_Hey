@@ -14,6 +14,7 @@ import Interfaces.IClickListAdd;
 
 public class ListColorAdapter extends RecyclerView.Adapter<ListCreateViewHolder> {
 
+    private int prePosition;
     private int [] listColorId;
 
     private IClickListAdd clickCallback;
@@ -35,14 +36,14 @@ public class ListColorAdapter extends RecyclerView.Adapter<ListCreateViewHolder>
 
         holder.color.getBackground().setTint(listColorId[position]);
         holder.color.setEnabled(false);
-        if (position != 0) holder.outline.setVisibility(View.INVISIBLE);
+        if (prePosition != position) holder.outline.setVisibility(View.INVISIBLE);
         else {
             holder.outline.setVisibility(View.VISIBLE);
-            clickCallback.setColor(holder);
+            clickCallback.setColor(position);
         }
         holder.container.setOnClickListener(v -> {
             clickCallback.setEnable(holder,listColorId.length);
-            clickCallback.setColor(holder);
+            clickCallback.setColor(position);
         });
 
 
@@ -54,5 +55,13 @@ public class ListColorAdapter extends RecyclerView.Adapter<ListCreateViewHolder>
     @Override
     public int getItemCount() {
         return listColorId.length;
+    }
+
+    public int getPrePosition() {
+        return prePosition;
+    }
+
+    public void setPrePosition(int prePosition) {
+        this.prePosition = prePosition;
     }
 }

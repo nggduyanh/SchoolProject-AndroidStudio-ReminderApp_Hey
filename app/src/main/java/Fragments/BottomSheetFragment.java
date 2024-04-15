@@ -21,6 +21,7 @@ import Models.Reminder;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
+    public static final int LIST_UPDATE = 5;
     private int mode;
     public static final int LIST_CREATE = 1;
     public static final int REMINDER_ADD=3;
@@ -41,6 +42,17 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     public static BottomSheetFragment newInstance(int mode) {
         BottomSheetFragment fragment = new BottomSheetFragment(mode);
         return fragment;
+    }
+
+    public static BottomSheetFragment newInstance (int mode, ListReminder lr)
+    {
+        BottomSheetFragment fragment = new BottomSheetFragment(mode);
+        fragment.setListReminder(lr);
+        return fragment;
+    }
+
+    private void setListReminder(ListReminder listReminder) {
+        if (mode == LIST_UPDATE) this.listReminder = listReminder;
     }
 
     @Override
@@ -76,9 +88,21 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                         .commit();
             }
             break;
+
             case REMINDER_ADD:
             {
                 getChildFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container,ReminderDetailFragment.newInstance(dialog),null).commit();
+            }
+            break;
+
+
+            case LIST_UPDATE:
+            {
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .setReorderingAllowed(true)
+                        .add(R.id.fragment_container,ListCreateFragment.newInstance(dialog),null)
+                        .commit();
             }
             break;
 
@@ -96,5 +120,13 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     {
         if (listReminder == null) listReminder = new ListReminder();
         return listReminder;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

@@ -8,7 +8,7 @@ public class DbContext
 
     public static String databaseName = "Hey";
 
-    public static int version = 5;
+    public static int version = 6;
 
 
     public static DatabaseReminder getInstance (Context c)

@@ -54,6 +54,7 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
     private BlurView headerBlur;
     private Dialog dialogParent;
     private int iconChoosed, colorChoosed;
+    private BottomSheetFragment parent;
 
     public ListCreateFragment()
     {
@@ -94,6 +95,7 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         ViewGroup root = view.findViewById(R.id.bottom_sheet_list_root);
         headerBlur.setupWith(root,new RenderScriptBlur(getContext()))
                 .setFrameClearDrawable(dialog.getWindow().getDecorView().getBackground())
+                .setBlurAutoUpdate(true)
                 .setBlurRadius(20f);
     }
 
@@ -103,49 +105,27 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
                 ContextCompat.getColor(getContext(),R.color.blue),
                 ContextCompat.getColor(getContext(),R.color.purple),
                 ContextCompat.getColor(getContext(),R.color.green),
-                ContextCompat.getColor(getContext(),R.color.cyan),
+                ContextCompat.getColor(getContext(),R.color.aqua),
                 ContextCompat.getColor(getContext(),R.color.crimson),
                 ContextCompat.getColor(getContext(),R.color.peach),
-                ContextCompat.getColor(getContext(),R.color.MillenialPink),
-                ContextCompat.getColor(getContext(),R.color.blue),
-                ContextCompat.getColor(getContext(),R.color.blue),
-                ContextCompat.getColor(getContext(),R.color.blue),
-                ContextCompat.getColor(getContext(),R.color.blue)
+                ContextCompat.getColor(getContext(),R.color.yellow),
+                ContextCompat.getColor(getContext(),R.color.orange),
+                ContextCompat.getColor(getContext(),R.color.darkYellow2),
+                ContextCompat.getColor(getContext(),R.color.darkGrey2),
+                ContextCompat.getColor(getContext(),R.color.tan)
         };
 
         arrIcon = new int[] {
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search,
-                R.drawable.delete_icon,
-                R.drawable.icon_search
+                R.drawable.home_icon,
+                R.drawable.pin_icon,
+                R.drawable.icon_chat,
+                R.drawable.icon_file,
+                R.drawable.icon_med,
+                R.drawable.icon_chair,
+                R.drawable.icon_music,
+                R.drawable.icon_game,
+                R.drawable.icon_person,
+                R.drawable.icon_bulb,
         };
     }
 
@@ -171,11 +151,19 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         listName = view.findViewById(R.id.list_name);
         deleteBtn = view.findViewById(R.id.delete_btn);
         headerBlur = view.findViewById(R.id.headerBlur);
+        parent = (BottomSheetFragment) getParentFragment();
     }
 
     private void setTitleBottomSheet ()
     {
         titleTextView.setText(title);
+
+        if (parent.getMode() == BottomSheetFragment.LIST_UPDATE) {
+            addButton.setText("Xong");
+            addButton.setEnabled(true );
+            titleTextView.setText("Thông tin danh sách");
+            listName.setText(parent.getListReminderInstance().getListName());
+        }
     }
 
     private void setOnclickComponent (BottomSheetDialog dialog)
@@ -185,10 +173,20 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         });
 
         addButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "d", Toast.LENGTH_SHORT).show();
-            ListReminder newListReminder = new ListReminder(listName.getText().toString(),iconChoosed,colorChoosed);
+
+            if (parent.getMode() == BottomSheetFragment.LIST_CREATE )
+            {
+                ListReminder newListReminder = new ListReminder(listName.getText().toString(),iconChoosed,colorChoosed);
+                DbContext.getInstance(getContext()).add(newListReminder);
+            }
+            else if (parent.getMode() == BottomSheetFragment.LIST_UPDATE)
+            {
+                parent.getListReminderInstance().setListName(listName.getText().toString());
+                parent.getListReminderInstance().setIcon(iconChoosed);
+                parent.getListReminderInstance().setColor(colorChoosed);
+                DbContext.getInstance(getContext()).update(parent.getListReminderInstance());
+            }
             IUpdateDatabase father = (IUpdateDatabase) getActivity();
-            DbContext.getInstance(getContext()).add(newListReminder);
             father.updateInterface();
             dialog.dismiss();
 
@@ -204,6 +202,19 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         layout.setAlignItems(AlignItems.CENTER);
         colorRV.setLayoutManager(layout);
         ListColorAdapter adapter = new ListColorAdapter(arrColor, this);
+        if (parent.getMode() == BottomSheetFragment.LIST_UPDATE)
+        {
+            iconResult.getBackground().setTint(parent.getListReminderInstance().getColor());
+            listName.setTextColor(parent.getListReminderInstance().getColor());
+            for (int i = 0 ; i < arrColor.length;i++)
+            {
+                if (arrColor[i] == parent.getListReminderInstance().getColor())
+                {
+                    adapter.setPrePosition(i);
+                    break;
+                }
+            }
+        }
         colorRV.setAdapter(adapter);
     }
 
@@ -215,6 +226,17 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
         layout.setJustifyContent(JustifyContent.CENTER);
         layout.setAlignItems(AlignItems.CENTER);
         ListIconAdapter adapter = new ListIconAdapter(initDrawable(arrIcon), this);
+        if (parent.getMode() == BottomSheetFragment.LIST_UPDATE)
+        {
+            for (int i =0 ; i < arrIcon.length;i++)
+            {
+                if (arrIcon[i] == parent.getListReminderInstance().getIcon())
+                {
+                    adapter.setPrePosition(i);
+                    break;
+                }
+            }
+        }
         iconRV.setLayoutManager(layout);
         iconRV.setAdapter(adapter);
     }
@@ -231,20 +253,20 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
     }
 
     @Override
-    public void setColor(ListCreateViewHolder holder)
+    public void setColor(int pos)
     {
-        int pos = colorRV.getChildLayoutPosition(holder.itemView);
-        if (pos == -1) pos = 0;
+//        int pos = colorRV.getChildLayoutPosition(holder.itemView);
+//        if (pos == -1) pos = 0;
         iconResult.getBackground().setTint(arrColor[pos]);
         listName.setTextColor(arrColor[pos]);
         colorChoosed = arrColor[pos];
     }
 
     @Override
-    public void setIcon(ListCreateViewHolder holder)
+    public void setIcon(int pos)
     {
-        int pos = iconRV.getChildLayoutPosition(holder.itemView);
-        if (pos == -1 ) pos = 0;
+//        int pos = iconRV.getChildLayoutPosition(holder.itemView);
+//        if (pos == -1 ) pos = 0;
         iconResult.setImageResource(arrIcon[pos]);
         iconChoosed = arrIcon[pos];
     }

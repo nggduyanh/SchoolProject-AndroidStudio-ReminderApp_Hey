@@ -82,8 +82,9 @@ public class DatabaseReminder extends SQLiteOpenHelper {
                 photoTable.add(db,p);
             }
         }
-
     }
+
+
 
     public Reminder getLastRowReminder ()
     {

@@ -14,6 +14,7 @@ import Interfaces.IClickListAdd;
 
 public class ListIconAdapter extends RecyclerView.Adapter<ListCreateViewHolder>{
 
+    private int prePosition;
     private Drawable[] iconDrawable;
 
     private IClickListAdd clickCallback;
@@ -32,15 +33,15 @@ public class ListIconAdapter extends RecyclerView.Adapter<ListCreateViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ListCreateViewHolder holder, int position) {
         holder.icon.setBackground(iconDrawable[position]);
-        if (position != 0 ) holder.outline.setVisibility(View.INVISIBLE);
+        if (prePosition != position ) holder.outline.setVisibility(View.INVISIBLE);
         else
         {
             holder.outline.setVisibility(View.VISIBLE);
-            clickCallback.setIcon(holder);
+            clickCallback.setIcon(position);
         }
         holder.container.setOnClickListener(v -> {
             clickCallback.setEnable(holder,iconDrawable.length);
-            clickCallback.setIcon(holder);
+            clickCallback.setIcon(position);
         });
         FlexboxLayoutManager.LayoutParams lp = (FlexboxLayoutManager.LayoutParams) holder.container.getLayoutParams();
         lp.setFlexBasisPercent(0.16f);
@@ -52,5 +53,11 @@ public class ListIconAdapter extends RecyclerView.Adapter<ListCreateViewHolder>{
         return iconDrawable.length;
     }
 
+    public int getPrePosition() {
+        return prePosition;
+    }
 
+    public void setPrePosition(int prePosition) {
+        this.prePosition = prePosition;
+    }
 }
