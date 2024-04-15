@@ -48,14 +48,14 @@ public class ListReminderTable implements IDatabaseTable<ListReminder> {
         values.put(name,obj.getListName());
         values.put(icon,obj.getIcon());
         db.insert(tableName,null,values);
-        db.close();
+
     }
 
     @Override
     public void delete(SQLiteDatabase db, ListReminder obj) {
         String sql = "Delete from " + tableName + " Where " + id + " = " + obj.getId();
         db.execSQL(sql);
-        db.close();
+
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ListReminderTable implements IDatabaseTable<ListReminder> {
         values.put(name,obj.getListName());
         values.put(icon,obj.getIcon());
         db.update(tableName,values,id + "=?", new String[] {String.valueOf(obj.getId())});
-        db.close();
+
     }
 
     @Override

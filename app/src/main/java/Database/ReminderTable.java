@@ -69,12 +69,8 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
     @Override
     public void delete(SQLiteDatabase db, Reminder obj) {
-        if (obj.getImage().size() == 0)
-        {
             String sql = "Delete from " + tableName + " Where " + ID + " = " + obj.getId();
             db.execSQL(sql);
-            db.close();
-        }
     }
 
     @Override
@@ -88,7 +84,6 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
         values.put(status,obj.isStatus()? 1 : 0);
         values.put(ListReminderFK,obj.getListReminder().getId());
         db.update(tableName,values,ID + "=?", new String[] {String.valueOf(obj.getId())});
-        db.close();
     }
 
     @Override
