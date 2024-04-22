@@ -94,7 +94,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         holder.imageOption.setOnClickListener(v->{
             iClickReminderInfo.clickReminderInfo(position);
             Log.d("checckck","sass");
-            Log.d("ten", model.getReminderName());
+//            Log.d("ten", model.getReminderName());
             if(model.getDate()==null){
                 holder.date.setVisibility(View.GONE);
             }

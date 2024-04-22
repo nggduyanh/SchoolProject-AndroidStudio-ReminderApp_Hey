@@ -255,32 +255,31 @@ public class ReminderDetailFragment extends Fragment{
             parent.getReminderInstance().setDate(date);
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
-<<<<<<< HEAD
-            DbContext.getInstance(getContext()).add(r);
-=======
+
             if(parent.getMode()==BottomSheetFragment.REMINDER_CREATE) {
                 DbContext.getInstance(getContext()).add(r);
 
             }
             if(parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
-                DbContext.getInstance(getContext()).update(r);
-                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
-                for (Uri p : parent.getReminderInstance().getImage())
-                {
-                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
-                }
+//                DbContext.getInstance(getContext()).update(r);
+//                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
+//                for (Uri p : parent.getReminderInstance().getImage())
+//                {
+//                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
+//                }
+//                ((IUpdateDatabase)getActivity()).updateInterface();
             }
 
-            if(r.getDate()!=null && r.getTime()!=null){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d("noti","ass");
-                    ((ICreateNotification)getActivity()).scheduleNotification(r);
-                }
-            }
+//            if(r.getDate()!=null && r.getTime()!=null){
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                    Log.d("noti","ass");
+//                    ((ICreateNotification)getActivity()).scheduleNotification(r);
+//                }
+//            }
             ((IUpdateDatabase)getActivity()).updateInterface();
 
->>>>>>> 633d72f744ca066f5a90edfe7adade319b0883d0
             d.dismiss();
+
         });
 
         cancelBtn.setOnClickListener(v -> {

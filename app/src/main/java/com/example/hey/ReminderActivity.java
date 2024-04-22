@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,12 +80,12 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         initReminderActivity();
     }
 
-    public void addReminder(){
-        Log.d("paDebug","hihi");
+    public void addReminder()
+    {
         doneBtn.setVisibility(View.VISIBLE);
-        adapter.getList().add(new Reminder());
+        list.add(new Reminder());
         index = list.size() - 1;
-        adapter.notifyDataSetChanged();
+        reminderList.getAdapter().notifyDataSetChanged();
     }
 
     public void initReminderActivity()
@@ -121,12 +123,11 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         optionLayout = findViewById(R.id.option_view);
 
         goBack=findViewById(R.id.arrow_back);
-//        Drawable back = this.getCon(R.drawable.back_icon);
-//        back.setTint(Color.RED);
-//        goBack.setCompoundDrawablesRelative(back,null,null,null);
-
-//        imageOption=findViewById(R.id.option);
-
+        Drawable back = ContextCompat.getDrawable(this,R.drawable.back_icon);
+        DrawableCompat.setTint(DrawableCompat.wrap(back),b.getInt("Color"));
+        goBack.setCompoundDrawablesWithIntrinsicBounds(back,null,null,null);
+        goBack.setTextColor(b.getInt("Color"));
+        doneBtn.setTextColor(b.getInt("Color"));
 
         reminderTitle = findViewById(R.id.reminder_title);
 
