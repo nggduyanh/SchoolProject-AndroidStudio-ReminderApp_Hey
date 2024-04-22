@@ -3,45 +3,86 @@ package Models;
 import android.net.Uri;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Reminder {
+    private String note;
+    private ListReminder listReminder;
     private int id;
     private String reminderName;
+
     private List<Uri> image;
     private boolean status,flag;
     private LocalDate date;
     private LocalTime time;
-    private ListReminder listReminder;
-
-    public String note;
-
     public Reminder() {
         image = new ArrayList<>();
     }
 
-    public Reminder(int id, String reminderName, Boolean flag, LocalDate date, LocalTime time) {
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time) {
         this.id = id;
         this.reminderName = reminderName;
         this.flag = flag;
         this.date = date;
         this.time = time;
+        this.status= false;
+        image = new ArrayList<>();
+    }
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
+        this.status= status;
+        image = new ArrayList<>();
+    }
+    public Reminder(int id, String reminderName, boolean flag, LocalDate date, LocalTime time,boolean status,int FK_id) {
+        this.id = id;
+        this.reminderName = reminderName;
+        this.flag = flag;
+        this.date = date;
+        this.time = time;
+        this.status= status;
+        listReminder = new ListReminder(FK_id);
         image = new ArrayList<>();
     }
 
-    public Reminder(int id, String reminderName, Boolean flag, LocalDate date, LocalTime time,boolean status) {
-        this.id = id;
-        this.reminderName = reminderName;
+
+    public boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
         this.flag = flag;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalTime time) {
         this.time = time;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
         this.status = status;
-        image = new ArrayList<>();
     }
-
 
 
     public int getId() {
@@ -60,13 +101,6 @@ public class Reminder {
         this.reminderName = reminderName;
     }
 
-    public boolean getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Boolean flag) {
-        this.flag = flag;
-    }
 
     public List<Uri> getImage() {
         return image;
@@ -89,21 +123,6 @@ public class Reminder {
         this.listReminder = listReminder;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
 
     public String getNote() {
         return note;
@@ -112,6 +131,7 @@ public class Reminder {
     public void setNote(String note) {
         this.note = note;
     }
+
 
     public boolean isStatus() {
         return status;
@@ -125,7 +145,6 @@ public class Reminder {
         return flag;
     }
 
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
+
 }
+

@@ -50,7 +50,9 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
         values.put(hour,obj.getTime() == null ? null : obj.getTime().toString());
         values.put(flag,obj.getFlag() ? 1 : 0);
         values.put(note,obj.getNote());
+
         values.put(status,obj.isStatus() ? 1 : 0);
+
         values.put(ListReminderFK,obj.getListReminder().getId());
         writedb.insert(tableName,null,values);
         //        Reminder temp = readLastRow(readDb);
@@ -63,6 +65,7 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 //                pTable.add(writedb,p);
 //            }
 //        }
+
 
     }
 
@@ -100,10 +103,12 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                     reminder = new Reminder(
                             cursor.getInt(0),
                             cursor.getString(1),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(5) == 1,
                             cursor.getString(3) == null ? null : LocalDate.parse(cursor.getString(3)),
                             cursor.getString(4) == null ? null: LocalTime.parse(cursor.getString(4)),
                             cursor.getInt(7) == 1);
+
+
                 }
                 list.add(reminder);
             }
@@ -125,11 +130,21 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
                     reminder = new Reminder(
                             cursor.getInt(0),
                             cursor.getString(1),
-                            cursor.getInt(4) == 1,
+                            cursor.getInt(5) == 1,
                             cursor.getString(3) == null ? null : LocalDate.parse(cursor.getString(3)),
                             cursor.getString(4) == null ? null: LocalTime.parse(cursor.getString(4)),
-                            cursor.getInt(7) == 1);
+                            cursor.getInt(7) == 1,
+                            cursor.getInt(6));
                 }
+
+                PhotoTable photoTable = new PhotoTable();
+                List<Photo> p = photoTable.readByReminder(db,reminder);
+
+                for (Photo photo : p )
+                {
+                    reminder.addImage(photo.getPhotoUri());
+                }
+
                 list.add(reminder);
             }
         }
