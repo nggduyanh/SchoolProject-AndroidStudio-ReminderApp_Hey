@@ -24,6 +24,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     public static final int LIST_UPDATE = 5;
     private int mode;
     public static final int LIST_CREATE = 1;
+    public static final int REMINDER_ADD=3;
+    public static final int REMINDER_UPDATE=4;
+
     public static final int REMINDER_CREATE = 2;
     private Reminder reminder;
     private ListReminder listReminder;
@@ -52,6 +55,18 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     private void setListReminder(ListReminder listReminder) {
         if (mode == LIST_UPDATE) this.listReminder = listReminder;
     }
+
+    public static BottomSheetFragment newInstance (int mode, Reminder r)
+    {
+        BottomSheetFragment fragment = new BottomSheetFragment(mode);
+        fragment.setReminder(r);
+        return fragment;
+    }
+
+    private void setReminder(Reminder reminder) {
+        if (mode == REMINDER_UPDATE) this.reminder = reminder;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +101,20 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                         .commit();
             }
             break;
+
+            case REMINDER_ADD:
+            {
+                getChildFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container,ReminderDetailFragment.newInstance(dialog),null).commit();
+            }
+            break;
+
+            case REMINDER_UPDATE:
+            {
+                getChildFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container,ReminderDetailFragment.newInstance(dialog),null).commit();
+            }
+            break;
+
+
             case LIST_UPDATE:
             {
                 getChildFragmentManager()
@@ -95,6 +124,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                         .commit();
             }
             break;
+
         }
         return dialog;
     }

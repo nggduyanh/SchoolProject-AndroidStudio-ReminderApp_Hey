@@ -3,6 +3,7 @@ package Fragments;
 import android.Manifest;
 import android.animation.Animator;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -59,11 +60,14 @@ import java.util.List;
 import Adapters.PhotoAdapter;
 import Database.DbContext;
 import Interfaces.IClickPhotoAdd;
+import Interfaces.ICreateNotification;
+import Interfaces.IUpdateDatabase;
+import Models.Photo;
 import Models.Reminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class ReminderDetailFragment extends Fragment  {
+public class ReminderDetailFragment extends Fragment{
     private static final String title = "Chi tiết";
     private TextView cancelBtn, addBtn, titleTv;
     private ReminderCreateFragment siblingFragment;
@@ -75,13 +79,15 @@ public class ReminderDetailFragment extends Fragment  {
     private TextView photoAddTv;
     private RecyclerView photoRv;
     private Uri photoURI;
+
+    private Dialog d;
+
     private PhotoAdapter adapter;
     private LocalDate date;
     private LocalTime time;
 
     private BlurView headerBlur;
-
-    private Dialog d;
+    private BottomSheetFragment parent;
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -113,6 +119,14 @@ public class ReminderDetailFragment extends Fragment  {
         }
     });
 
+    public ReminderDetailFragment(Dialog d){
+        this.d=d;
+    }
+
+    public ReminderDetailFragment(ReminderCreateFragment siblingFragment) {
+        this.siblingFragment = siblingFragment;
+
+    }
     public ReminderDetailFragment(ReminderCreateFragment siblingFragment,Dialog d) {
         this.siblingFragment = siblingFragment;
         this.d = d;
@@ -122,7 +136,12 @@ public class ReminderDetailFragment extends Fragment  {
     {
 
     }
-
+    public static ReminderDetailFragment newInstance(Dialog d){
+        Bundle args = new Bundle();
+        ReminderDetailFragment fragment = new ReminderDetailFragment(d);
+        fragment.setArguments(args);
+        return fragment;
+    }
     public static ReminderDetailFragment newInstance() {
         Bundle args = new Bundle();
         ReminderDetailFragment fragment = new ReminderDetailFragment();
@@ -154,6 +173,7 @@ public class ReminderDetailFragment extends Fragment  {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        parent=(BottomSheetFragment) getParentFragment();
         View v = inflater.inflate(R.layout.reminder_detail,null);
         initComponent(v);
         setTitle();
@@ -184,7 +204,6 @@ public class ReminderDetailFragment extends Fragment  {
             public void removePhoto(int position) {
                 adapter.getPhotos().remove(position);
                 adapter.notifyDataSetChanged();
-                parent.getReminderInstance().getImage().remove(position);
             }
         });
         photoRv.setAdapter(adapter);
@@ -232,11 +251,32 @@ public class ReminderDetailFragment extends Fragment  {
         BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
 
         addBtn.setOnClickListener(v -> {
+
             parent.getReminderInstance().setDate(date);
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
-            DbContext.getInstance(getContext()).add(r);
+            if(parent.getMode()==BottomSheetFragment.REMINDER_CREATE) {
+                DbContext.getInstance(getContext()).add(r);
 
+            }
+            if(parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
+                DbContext.getInstance(getContext()).update(r);
+                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
+                for (Uri p : parent.getReminderInstance().getImage())
+                {
+                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
+                }
+            }
+
+            if(r.getDate()!=null && r.getTime()!=null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d("noti","ass");
+                    ((ICreateNotification)getActivity()).scheduleNotification(r);
+                }
+            }
+            ((IUpdateDatabase)getActivity()).updateInterface();
+
+            d.dismiss();
         });
 
         cancelBtn.setOnClickListener(v -> {
@@ -251,6 +291,9 @@ public class ReminderDetailFragment extends Fragment  {
 
                 parent.getReminderInstance().setDate(date);
                 parent.getReminderInstance().setTime(time);
+            }
+            else if (parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
+                d.dismiss();
             }
         });
 
@@ -338,7 +381,7 @@ public class ReminderDetailFragment extends Fragment  {
                     dateSwitch.setChecked(true);
                     if (time == null && parent.getReminderInstance().getTime() == null)
                     {
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             LocalTime now = LocalTime.now();
                             renderTimeAndSetLocalTimeVariable(now.getHour(),now.getMinute());
                         }
@@ -425,9 +468,13 @@ public class ReminderDetailFragment extends Fragment  {
     private void setTitle() {
         titleTv.setText(title);
         addBtn.setText("Thêm");
-        cancelBtn.setText("Quay lại");
-        cancelBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.back_icon,0,0,0);
-
+        if(parent.getMode()==BottomSheetFragment.REMINDER_CREATE){
+            cancelBtn.setText("Quay lại");
+            cancelBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.back_icon,0,0,0);
+        }
+        if(parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
+            addBtn.setText("Xong");
+        }
     }
 
     private void initComponent (View view)
@@ -560,6 +607,7 @@ public class ReminderDetailFragment extends Fragment  {
             intentActivityPhotoResult.launch(takePictureIntent);
         }
     }
+
 
 }
 

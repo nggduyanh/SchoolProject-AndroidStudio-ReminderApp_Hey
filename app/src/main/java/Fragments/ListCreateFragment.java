@@ -2,6 +2,7 @@ package Fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -188,6 +189,7 @@ public class ListCreateFragment extends Fragment implements IClickListAdd {
             IUpdateDatabase father = (IUpdateDatabase) getActivity();
             father.updateInterface();
             dialog.dismiss();
+
         });
     }
 
