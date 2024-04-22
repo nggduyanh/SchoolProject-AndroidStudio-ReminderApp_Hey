@@ -53,7 +53,6 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
         values.put(status,obj.isStatus() ? 1 : 0);
         values.put(ListReminderFK,obj.getListReminder().getId());
         writedb.insert(tableName,null,values);
-        writedb.close();
         //        Reminder temp = readLastRow(readDb);
 //        if (obj.getImage().size() > 0)
 //        {

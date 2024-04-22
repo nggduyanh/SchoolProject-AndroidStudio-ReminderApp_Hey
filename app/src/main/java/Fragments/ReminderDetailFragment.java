@@ -236,7 +236,7 @@ public class ReminderDetailFragment extends Fragment  {
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
             DbContext.getInstance(getContext()).add(r);
-
+            d.dismiss();
         });
 
         cancelBtn.setOnClickListener(v -> {
