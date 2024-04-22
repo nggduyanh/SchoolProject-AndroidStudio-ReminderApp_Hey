@@ -25,6 +25,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -77,15 +79,15 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     }
 
     public void addReminder(){
+        Log.d("paDebug","hihi");
         doneBtn.setVisibility(View.VISIBLE);
-        list.add(new Reminder());
+        adapter.getList().add(new Reminder());
         index = list.size() - 1;
         adapter.notifyDataSetChanged();
     }
 
-    public void initReminderActivity(){
-
-
+    public void initReminderActivity()
+    {
         Intent intent = getIntent();
         Bundle b = intent.getExtras();
         listID=b.getInt("Id");
@@ -119,6 +121,9 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
         optionLayout = findViewById(R.id.option_view);
 
         goBack=findViewById(R.id.arrow_back);
+        Drawable back = this.getCon(R.drawable.back_icon);
+        back.setTint(Color.RED);
+        goBack.setCompoundDrawablesRelative(back,null,null,null);
 
 //        imageOption=findViewById(R.id.option);
 
@@ -196,7 +201,7 @@ public class ReminderActivity extends AppCompatActivity implements IClickReminde
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        new MenuInflater(this).inflate(R.menu.context_menu_option, menu);
+//        new MenuInflater(this).inflate(R.menu.context_menu_option, menu);
     }
 
     @Override

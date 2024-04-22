@@ -113,6 +113,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
 
     }
 
+    public List<Reminder> getList() {
+        return list;
+    }
+
+    public void setList(List<Reminder> list) {
+        this.list = list;
+    }
 
     @Override
     public int getItemCount() {

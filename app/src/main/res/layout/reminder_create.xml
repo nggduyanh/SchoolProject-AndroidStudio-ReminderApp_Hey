@@ -36,13 +36,10 @@
                         android:background="@null"
                         android:hint="Tiêu đề" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/grey" />
 
                     <EditText
                         android:id="@+id/note"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:inputType="textVisiblePassword"
