@@ -258,24 +258,23 @@ public class ReminderDetailFragment extends Fragment{
 
             if(parent.getMode()==BottomSheetFragment.REMINDER_CREATE) {
                 DbContext.getInstance(getContext()).add(r);
-
+                r = DbContext.getInstance(getContext()).getLastRowReminder();
             }
             if(parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
-//                DbContext.getInstance(getContext()).update(r);
-//                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
-//                for (Uri p : parent.getReminderInstance().getImage())
-//                {
-//                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
-//                }
-//                ((IUpdateDatabase)getActivity()).updateInterface();
+                DbContext.getInstance(getContext()).update(r);
+                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
+                for (Uri p : parent.getReminderInstance().getImage())
+                {
+                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
+                }
             }
 
-//            if(r.getDate()!=null && r.getTime()!=null){
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    Log.d("noti","ass");
-//                    ((ICreateNotification)getActivity()).scheduleNotification(r);
-//                }
-//            }
+            if(r.getDate()!=null && r.getTime()!=null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d("id nay 2:"," "+r.getId());
+                    ((ICreateNotification)getActivity()).setNotification(r);
+                }
+            }
             ((IUpdateDatabase)getActivity()).updateInterface();
 
             d.dismiss();

@@ -2,10 +2,6 @@ package Fragments;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.example.hey.NotificationReceiver.channelID;
-import static com.example.hey.NotificationReceiver.messageExtra;
-import static com.example.hey.NotificationReceiver.notificationID;
-import static com.example.hey.NotificationReceiver.titleExtra;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -122,7 +118,16 @@ public class ReminderCreateFragment extends Fragment
             Reminder r = parent.getReminderInstance();
             DbContext.getInstance(getContext()).add(r);
             Reminder remindernoti = DbContext.getInstance(getContext()).getLastRowReminder();
-            ((ICreateNotification) getActivity()).scheduleNotification(remindernoti);
+
+
+
+            if(r.getDate()!=null && r.getTime()!=null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d("id nay1:"," "+remindernoti.getId());
+                    ((ICreateNotification)getActivity()).setNotification(r);
+                }
+            }
+
             IUpdateDatabase fatherAct = (IUpdateDatabase) getActivity();
             fatherAct.updateInterface();
             d.dismiss();
