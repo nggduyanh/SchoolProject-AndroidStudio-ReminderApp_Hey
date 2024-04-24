@@ -25,8 +25,8 @@ public class AddFragment extends Fragment {
 
     private int mode;
 
-    public static final int PhanAnh_MODE = 1;
-    public static final int DuyAnh_MODE=2;
+    public static final int Main_MODE = 1;
+    public static final int Reminder_MODE=2;
     private TextView addGroup,addReminder;
     private Activity activity;
 
@@ -71,7 +71,7 @@ public class AddFragment extends Fragment {
         addGroup = v.findViewById(R.id.addGroup);
         addReminder = v.findViewById(R.id.addReminder);
 
-        if (mode == DuyAnh_MODE) addGroup.setVisibility(View.GONE);
+        if (mode == Reminder_MODE) addGroup.setVisibility(View.GONE);
 
         addGroup.setOnClickListener(view ->
         {
@@ -82,7 +82,7 @@ public class AddFragment extends Fragment {
         addReminder.setOnClickListener(view ->
         {
 
-            if (mode == PhanAnh_MODE)
+            if (mode == Main_MODE)
             {
                 BottomSheetFragment groupFragment = BottomSheetFragment.newInstance(BottomSheetFragment.REMINDER_CREATE);
                 groupFragment.show(getChildFragmentManager(), groupFragment.getTag());

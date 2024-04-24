@@ -18,36 +18,25 @@ import com.example.hey.R;
 
 import java.time.LocalDate;
 
-// Constants for notification
-
-// BroadcastReceiver for handling notifications
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    public static final String notificationID = "notificationID";
-    public static final String channelID = "MainChannel";
-    public static final String titleExtra = "titleExtra";
-    public static final String messageExtra = "messageExtra";
-
     @RequiresApi(api = Build.VERSION_CODES.O)
-    // Method called when the broadcast is received
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle b = intent.getExtras();
-        // Build the notification using NotificationCompat.Builder
-        Notification notification = new NotificationCompat.Builder(context, channelID)
+
+        Notification notification = new NotificationCompat.Builder(context, "channelID")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(b.getString(titleExtra)) // Set title from intent
-                .setContentText(b.getString(messageExtra)) // Set content text from intent
+                .setContentTitle("Hey")
+                .setContentText(b.getString("messageExtra"))
                 .build();
 
-        // Get the NotificationManager service
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Show the notification using the manager
-        manager.notify(b.getInt(notificationID), notification);
+        manager.notify(b.getInt("notificationID"), notification);
 
-        Log.d("receiver","id:"+b.getInt(notificationID));
+        Log.d("receiver","id:"+b.getInt("notificationID"));
     }
 
 

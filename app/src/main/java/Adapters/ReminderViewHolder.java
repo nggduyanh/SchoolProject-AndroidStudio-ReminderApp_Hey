@@ -26,7 +26,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder{
     public ReminderViewHolder(@NonNull View itemView){
         super(itemView);
         reminderName = itemView.findViewById(R.id.reminder_name);
-        radioButton= itemView.findViewById(R.id.radioButton);
+//        radioButton= itemView.findViewById(R.id.radioButton);
         imageOption =itemView.findViewById(R.id.icon_info);
         imageDelete=itemView.findViewById(R.id.icon_delete);
         date=itemView.findViewById(R.id.date);
