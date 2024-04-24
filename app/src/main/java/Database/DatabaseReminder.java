@@ -29,8 +29,7 @@ public class DatabaseReminder extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db)
-    {
+    public void onCreate(SQLiteDatabase db) {
         listReminder.createTable(db);
         reminder.createTable(db);
         photo.createTable(db);
@@ -44,111 +43,107 @@ public class DatabaseReminder extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public List<Reminder> getReminderByListID(int id){
+    public List<Reminder> getReminderByListID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return reminder.readByListReminderID(db,id);
+        return reminder.readByListReminderID(db, id);
     }
 
 
-    public List<ListReminder> getListReminder ()
-    {
+    public List<ListReminder> getListReminder() {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<ListReminder> l =  listReminder.read(db);
+        List<ListReminder> l = listReminder.read(db);
         db.close();
         return l;
     }
 
-    public List<Reminder> getReminder ()
-    {
+    public List<Reminder> getReminder() {
         SQLiteDatabase db = getReadableDatabase();
         List<Reminder> l = reminder.read(db);
         db.close();
-        return l ;
+        return l;
     }
 
-    public void add (ListReminder lr)
-    {
+    public void add(ListReminder lr) {
         SQLiteDatabase db = getWritableDatabase();
-        listReminder.add(db,lr);
+        listReminder.add(db, lr);
         db.close();
 
     }
 
-    public void add (Reminder r)
-    {
+    public void add(Reminder r) {
         SQLiteDatabase db = getWritableDatabase();
-        reminder.add(db,r);
+        reminder.add(db, r);
         Reminder tbl = reminder.readLastRow(getReadableDatabase());
-        if (r.getImage().size() > 0)
-        {
+        if (r.getImage().size() > 0) {
             PhotoTable photoTable = new PhotoTable();
-            for (Uri uri : r.getImage())
-            {
-                Photo p = new Photo(uri,tbl);
-                photoTable.add(db,p);
+            for (Uri uri : r.getImage()) {
+                Photo p = new Photo(uri, tbl);
+                photoTable.add(db, p);
             }
         }
         db.close();
     }
 
 
-
-    public Reminder getLastRowReminder ()
-    {
+    public Reminder getLastRowReminder() {
         return reminder.readLastRow(getReadableDatabase());
     }
 
-    public void deleteListReminder (ListReminder lr)
-    {
+    public void deleteListReminder(ListReminder lr) {
 
     }
 
 
-    public void update (Reminder r)
-    {
+    public void update(Reminder r) {
         SQLiteDatabase db = getWritableDatabase();
-        reminder.update(db,r);
+        reminder.update(db, r);
         db.close();
 
     }
 
-    public void update (ListReminder lr)
-    {
+    public void update(ListReminder lr) {
         SQLiteDatabase db = getWritableDatabase();
-        listReminder.update(db,lr);
+        listReminder.update(db, lr);
         db.close();
 
     }
 
-    public void update (Photo p)
-    {
+    public void update(Photo p) {
         SQLiteDatabase db = getWritableDatabase();
-        photo.update(db,p);
+        photo.update(db, p);
         db.close();
 
     }
 
-    public void delete (Reminder r)
-    {
+    public void delete(Reminder r) {
         SQLiteDatabase db = getWritableDatabase();
-        reminder.delete(db,r);
+        reminder.delete(db, r);
         db.close();
     }
 
-    public void delete (ListReminder lr)
-    {
+    public void delete(ListReminder lr) {
         SQLiteDatabase db = getWritableDatabase();
-        listReminder.delete(db,lr);
+        listReminder.delete(db, lr);
         db.close();
 
     }
 
-    public void delete (Photo p )
-    {
+    public void delete(Photo p) {
         SQLiteDatabase db = getWritableDatabase();
-        photo.delete(db,p);
+        photo.delete(db, p);
         db.close();
     }
 
+    public void deleteAllPhotoReminder(Reminder r)
+    {
+        SQLiteDatabase db =getWritableDatabase();
+        photo.deleteByReminder(db,r);
+        db.close();
+    }
 
+    public void addPhotoByReminder (Photo p)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        photo.add(db,p);
+    }
 }

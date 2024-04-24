@@ -15,17 +15,17 @@
         app:layout_constraintTop_toTopOf="parent"
         >
 
-        <RadioButton
-            android:id="@+id/radioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/reminder_name"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+<!--        <RadioButton-->
+<!--            android:id="@+id/radioButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/reminder_name"-->
+<!--            app:layout_constraintHorizontal_chainStyle="spread_inside"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
 
-            />
+<!--            />-->
 
         <!--    <EditText-->
         <!--        android:id="@+id/reminder_name"-->
@@ -45,13 +45,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/icon_delete"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toEndOf="@+id/radioButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="25dp"
+            android:paddingEnd="25dp"
+            android:text="hihi"
+            />
 
         <ImageView
             android:id="@+id/icon_delete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/reminder_name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/icon_info"
             app:layout_constraintStart_toEndOf="@+id/reminder_name"

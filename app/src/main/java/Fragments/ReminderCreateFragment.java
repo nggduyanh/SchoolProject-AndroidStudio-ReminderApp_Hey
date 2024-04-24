@@ -1,8 +1,19 @@
 package Fragments;
 
+import static android.content.Context.ALARM_SERVICE;
+import static android.content.Context.NOTIFICATION_SERVICE;
+
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,15 +27,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.hey.NotificationReceiver;
 import com.example.hey.R;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 import Database.DbContext;
+import Interfaces.ICreateNotification;
 import Interfaces.IUpdateDatabase;
 import Models.ListReminder;
 import Models.Reminder;
@@ -92,6 +108,7 @@ public class ReminderCreateFragment extends Fragment
         return v;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void initEvent()
     {
         BottomSheetFragment parent = (BottomSheetFragment) getParentFragment();
@@ -100,6 +117,17 @@ public class ReminderCreateFragment extends Fragment
             Toast.makeText(getContext(), "d", Toast.LENGTH_SHORT).show();
             Reminder r = parent.getReminderInstance();
             DbContext.getInstance(getContext()).add(r);
+            Reminder remindernoti = DbContext.getInstance(getContext()).getLastRowReminder();
+
+
+
+            if(r.getDate()!=null && r.getTime()!=null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d("id nay1:"," "+remindernoti.getId());
+                    ((ICreateNotification)getActivity()).setNotification(r);
+                }
+            }
+
             IUpdateDatabase fatherAct = (IUpdateDatabase) getActivity();
             fatherAct.updateInterface();
             d.dismiss();
@@ -216,7 +244,5 @@ public class ReminderCreateFragment extends Fragment
     {
         dateTimeString = s;
     }
-
-
 
 }

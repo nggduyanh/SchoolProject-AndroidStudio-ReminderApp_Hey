@@ -55,6 +55,17 @@ public class ReminderTable implements IDatabaseTable<Reminder> {
 
         values.put(ListReminderFK,obj.getListReminder().getId());
         writedb.insert(tableName,null,values);
+        //        Reminder temp = readLastRow(readDb);
+//        if (obj.getImage().size() > 0)
+//        {
+//            PhotoTable pTable = new PhotoTable();
+//            for (Uri image : obj.getImage())
+//            {
+//                Photo p = new Photo(image,temp);
+//                pTable.add(writedb,p);
+//            }
+//        }
+
 
     }
 

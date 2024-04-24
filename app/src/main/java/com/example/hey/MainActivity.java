@@ -1,11 +1,5 @@
 package com.example.hey;
 
-
-import static com.example.hey.NotificationReceiver.channelID;
-import static com.example.hey.NotificationReceiver.messageExtra;
-import static com.example.hey.NotificationReceiver.notificationID;
-import static com.example.hey.NotificationReceiver.titleExtra;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -102,13 +96,10 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
         setMainLayoutPadding();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            checkNotificationPermissions(this);
+            if(checkPermissions(this)){
+                createChannel();
+            }
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel();
-        }
-
     }
 
 
@@ -166,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     }
 
     private void initFragment() {
-        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container_main, AddFragment.newInstance(AddFragment.PhanAnh_MODE,this),null).commit();
+        getSupportFragmentManager().beginTransaction().setReorderingAllowed(true).add(R.id.fragment_container_main, AddFragment.newInstance(AddFragment.Main_MODE,this),null).commit();
     }
 
     private void initGroupReminderComponents()
@@ -247,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     {
         listReminders = DbContext.getInstance(this).getListReminder();
         listReminderRV.setAdapter(new ListReminderAdapter(listReminders,this));
-
     }
 
     @Override
@@ -280,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
     @Override
     public void getListPosition(int position) {
         index=position;
-        Log.d("vitri", ""+index);
     }
     @Override
     public void intentCall() {
@@ -291,7 +280,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
         b.putString("Title",listReminder.getListName());
         b.putInt("Color",listReminder.getColor());
         int id =listReminder.getId();
-        DbContext.getInstance(this).getReminderByListID(id);
         intent.putExtras(b);
         launcher.launch(intent);
     }
@@ -299,76 +287,56 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
-    @SuppressLint("ScheduleExactAlarm")
-    public void scheduleNotification(Reminder reminder) {
-        // Create an intent for the Notification BroadcastReceiver
-        Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+    public void setNotification(Reminder reminder) {
 
-        // Extract title and message from user input
+        Intent intent = new Intent(this, NotificationReceiver.class);
 
 
-        // Add title and message as extras to the intent
         Bundle b = new Bundle();
 
-        b.putString(titleExtra, reminder.getReminderName());
-        b.putString(messageExtra, reminder.getReminderName());
-        b.putInt(notificationID,reminder.getId());
+        b.putString("messageExtra", reminder.getReminderName());
+        b.putInt("notificationID",reminder.getId());
         intent.putExtras(b);
-        // Create a PendingIntent for the broadcast
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getApplicationContext(),
+                this,
                 reminder.getId(),
                 intent,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        // Get the AlarmManager service
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        // Get the selected time and schedule the notification
 
-        int hour = reminder.getTime().getHour();
         int minute = reminder.getTime().getMinute();
+        int hour = reminder.getTime().getHour();
         int day = reminder.getDate().getDayOfMonth();
         int month = reminder.getDate().getMonthValue()-1;
         int year = reminder.getDate().getYear();
 
-        // Create a Calendar instance and set the selected date and time
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute);
 
-        Log.d("duyanh", String.valueOf(hour));
-        Log.d("duyanh", String.valueOf(minute));
-        Log.d("duyanh", String.valueOf(day));
-        Log.d("duyanh", String.valueOf(month));
-        Log.d("duyanh", String.valueOf(year));
 
         long time = calendar.getTimeInMillis();
-
         alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 time,
                 pendingIntent
         );
-
-        Log.d("notimain","sucess");
-        // Show an alert dialog with information
-        // about the scheduled notification
     }
 
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void createNotificationChannel() {
-        // Create a notification channel for devices running
-        // Android Oreo (API level 26) and above
+    public void createChannel() {
+
         String name = "Main Chanel";
         String desc = "All of the Reminders";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(channelID, name, importance);
+        NotificationChannel channel = new NotificationChannel("MainChannel", name, importance);
         channel.setDescription(desc);
 
-        // Get the NotificationManager service and create the channel
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
     }
@@ -376,8 +344,8 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean checkNotificationPermissions(Context context) {
-        // Check if notification permissions are granted
+    public boolean checkPermissions(Context context) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
@@ -385,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
             boolean isEnabled = notificationManager.areNotificationsEnabled();
 
             if (!isEnabled) {
-                // Open the app notification settings if notifications are not enabled
                 Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
                 context.startActivity(intent);
@@ -396,7 +363,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
             boolean areEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
 
             if (!areEnabled) {
-                // Open the app notification settings if notifications are not enabled
                 Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
                 context.startActivity(intent);
@@ -405,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements IUpdateDatabase, 
             }
         }
 
-        // Permissions are granted
         return true;
     }
 }

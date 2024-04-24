@@ -26,27 +26,33 @@ public class PhotoTable implements IDatabaseTable<Photo> {
     @Override
     public void createTable(SQLiteDatabase db) {
 
-        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s Integer, FOREIGN KEY (%s) REFERENCES LoiNhac(IdLoiNhac) ON DELETE CASCADE)", tableName,ID,UriPhoto,ReminderFK,ReminderFK);
+        String sql = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,%s TEXT, %s Integer, FOREIGN KEY (%s) REFERENCES LoiNhac(IdLoiNhac) ON DELETE CASCADE)", tableName, ID, UriPhoto, ReminderFK, ReminderFK);
         db.execSQL(sql);
     }
 
     @Override
     public void dropTable(SQLiteDatabase db) {
-        String sql = String.format("drop table if exists %s",tableName);
+        String sql = String.format("drop table if exists %s", tableName);
         db.execSQL(sql);
     }
 
     @Override
     public void add(SQLiteDatabase db, Photo obj) {
         ContentValues values = new ContentValues();
-        values.put(UriPhoto,obj.getPhotoUri().toString());
-        values.put(ReminderFK,obj.getReminder().getId());
-        db.insert(tableName,null,values);
+        values.put(UriPhoto, obj.getPhotoUri().toString());
+        values.put(ReminderFK, obj.getReminder().getId());
+        db.insert(tableName, null, values);
     }
 
     @Override
     public void delete(SQLiteDatabase db, Photo obj) {
         String sql = "Delete from " + tableName + " Where " + UriPhoto + " = " + obj.getPhotoUri() + " AND " + ReminderFK + " = " + obj.getReminder().getId();
+        db.execSQL(sql);
+    }
+
+    public void deleteByReminder(SQLiteDatabase db, Reminder r)
+    {
+        String sql = "Delete from " + tableName + " Where " +  ReminderFK + " = " + r.getId();
         db.execSQL(sql);
     }
 

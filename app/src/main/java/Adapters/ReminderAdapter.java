@@ -63,22 +63,24 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         }
         else holder.time.setText(model.getTime().toString());
 
+
         if(model.getImage()!=null){
-            Log.d("paDebug",model.getImage().size() + "");
             PhotoReminderAdapter adapter = new PhotoReminderAdapter(model.getImage());
             LinearLayoutManager layout = new LinearLayoutManager(holder.itemView.getContext(),LinearLayoutManager.HORIZONTAL,false);
             holder.imageContain.setLayoutManager(layout);
             holder.imageContain.setAdapter(adapter);
         }
-        holder.radioButton.setChecked(model.getStatus());
+
+
+//        holder.radioButton.setChecked(model.getStatus());
 
         holder.reminderName.setText(model.getReminderName());
 
-        holder.radioButton.setOnClickListener(v->{
-            model.setStatus(!model.getStatus());
-            holder.radioButton.setChecked(model.getStatus());
-            DbContext.getInstance(v.getContext()).update(model);
-        });
+//        holder.radioButton.setOnClickListener(v->{
+//            model.setStatus(!model.getStatus());
+//            holder.radioButton.setChecked(model.getStatus());
+//            DbContext.getInstance(v.getContext()).update(model);
+//        });
 
         holder.reminderName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -94,16 +96,16 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         holder.imageOption.setOnClickListener(v->{
             iClickReminderInfo.clickReminderInfo(position);
             Log.d("checckck","sass");
-            Log.d("ten", model.getReminderName());
-            if(model.getDate()==null){
-                holder.date.setVisibility(View.GONE);
-            }
-            else holder.date.setVisibility(View.VISIBLE);
-
-            if(model.getTime()==null){
-                holder.time.setVisibility(View.GONE);
-            }
-            else holder.time.setVisibility(View.VISIBLE);
+////
+//            if(model.getDate()==null){
+//                holder.date.setVisibility(View.GONE);
+//            }
+//            else holder.date.setVisibility(View.VISIBLE);
+//
+//            if(model.getTime()==null){
+//                holder.time.setVisibility(View.GONE);
+//            }
+//            else holder.time.setVisibility(View.VISIBLE);
         });
 
         holder.imageDelete.setOnClickListener(v->{
@@ -113,6 +115,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
 
     }
 
+//    public List<Reminder> getList() {
+//        return list;
+//    }
+//
+//    public void setList(List<Reminder> list) {
+//        this.list = list;
+//    }
 
     @Override
     public int getItemCount() {

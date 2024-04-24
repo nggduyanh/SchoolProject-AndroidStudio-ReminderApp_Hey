@@ -62,6 +62,7 @@ import Database.DbContext;
 import Interfaces.IClickPhotoAdd;
 import Interfaces.ICreateNotification;
 import Interfaces.IUpdateDatabase;
+import Models.Photo;
 import Models.Reminder;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -203,7 +204,6 @@ public class ReminderDetailFragment extends Fragment{
             public void removePhoto(int position) {
                 adapter.getPhotos().remove(position);
                 adapter.notifyDataSetChanged();
-                parent.getReminderInstance().getImage().remove(position);
             }
         });
         photoRv.setAdapter(adapter);
@@ -255,24 +255,30 @@ public class ReminderDetailFragment extends Fragment{
             parent.getReminderInstance().setDate(date);
             parent.getReminderInstance().setTime(time);
             Reminder r = parent.getReminderInstance();
+
             if(parent.getMode()==BottomSheetFragment.REMINDER_CREATE) {
                 DbContext.getInstance(getContext()).add(r);
-
+                r = DbContext.getInstance(getContext()).getLastRowReminder();
             }
             if(parent.getMode()==BottomSheetFragment.REMINDER_UPDATE) {
                 DbContext.getInstance(getContext()).update(r);
-
+                DbContext.getInstance(getContext()).deleteAllPhotoReminder(r);
+                for (Uri p : parent.getReminderInstance().getImage())
+                {
+                    DbContext.getInstance(getContext()).addPhotoByReminder(new Photo(p,parent.getReminderInstance()));
+                }
             }
 
             if(r.getDate()!=null && r.getTime()!=null){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d("noti","ass");
-                    ((ICreateNotification)getActivity()).scheduleNotification(r);
+                    Log.d("id nay 2:"," "+r.getId());
+                    ((ICreateNotification)getActivity()).setNotification(r);
                 }
             }
             ((IUpdateDatabase)getActivity()).updateInterface();
 
             d.dismiss();
+
         });
 
         cancelBtn.setOnClickListener(v -> {
